@@ -6,7 +6,7 @@ Code and data for the paper:
 
 > **Cross-Scanner Reliability of Brain MRI Foundation Model Embeddings: A Travelling-Heads Study**
 > Rafael Navarro-Gonzalez, Santiago Aja-Fernandez, Alvaro Planchuelo-Gomez, Rodrigo de Luis-Garcia
-> *Medical Image Analysis, 2026*
+> *2026 (preprint)*
 
 ## Overview
 
@@ -118,7 +118,7 @@ If you use this code or data, please cite:
   author={Navarro-Gonz{\'a}lez, Rafael and Aja-Fern{\'a}ndez, Santiago and Planchuelo-G{\'o}mez, {\'A}lvaro and de Luis-Garc{\'{\i}}a, Rodrigo},
   journal={Medical Image Analysis},
   year={2026},
-  note={Under review}
+  note={Preprint}
 }
 ```
 
