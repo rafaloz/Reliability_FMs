@@ -1,5 +1,7 @@
 # Cross-Scanner Reliability of Brain MRI Foundation Model Embeddings
 
+![Graphical Abstract](graphical_abstract.png)
+
 Code and data for the paper:
 
 > **Cross-Scanner Reliability of Brain MRI Foundation Model Embeddings: A Travelling-Heads Study**
