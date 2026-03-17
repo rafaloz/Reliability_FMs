@@ -1,0 +1,134 @@
+{
+  "AnatCL": {
+    "original_dim": 512,
+    "original_icc": 0.972,
+    "pca_results": {
+      "pc10": {
+        "n_pcs": 10,
+        "var_explained_pct": 99.4,
+        "median_icc": 0.981,
+        "mean_icc": 0.981,
+        "q25": 0.979,
+        "q75": 0.983
+      },
+      "pc20": {
+        "n_pcs": 20,
+        "var_explained_pct": 99.8,
+        "median_icc": 0.979,
+        "mean_icc": 0.936,
+        "q25": 0.977,
+        "q75": 0.983
+      }
+    }
+  },
+  "FreeSurfer": {
+    "original_dim": 203,
+    "original_icc": 0.916,
+    "pca_results": {
+      "pc10": {
+        "n_pcs": 10,
+        "var_explained_pct": 92.4,
+        "median_icc": 0.973,
+        "mean_icc": 0.973,
+        "q25": 0.969,
+        "q75": 0.977
+      },
+      "pc20": {
+        "n_pcs": 20,
+        "var_explained_pct": 98.8,
+        "median_icc": 0.963,
+        "mean_icc": 0.907,
+        "q25": 0.935,
+        "q75": 0.973
+      }
+    }
+  },
+  "y-Aware": {
+    "original_dim": 1024,
+    "original_icc": 0.809,
+    "pca_results": {
+      "pc10": {
+        "n_pcs": 10,
+        "var_explained_pct": 86.2,
+        "median_icc": 0.911,
+        "mean_icc": 0.91,
+        "q25": 0.897,
+        "q75": 0.932
+      },
+      "pc20": {
+        "n_pcs": 20,
+        "var_explained_pct": 93.7,
+        "median_icc": 0.93,
+        "mean_icc": 0.889,
+        "q25": 0.906,
+        "q75": 0.946
+      }
+    }
+  },
+  "BrainIAC": {
+    "original_dim": 768,
+    "original_icc": 0.453,
+    "pca_results": {
+      "pc10": {
+        "n_pcs": 10,
+        "var_explained_pct": 97.4,
+        "median_icc": 0.383,
+        "mean_icc": 0.381,
+        "q25": 0.29,
+        "q75": 0.486
+      },
+      "pc20": {
+        "n_pcs": 20,
+        "var_explained_pct": 98.6,
+        "median_icc": 0.31,
+        "mean_icc": 0.326,
+        "q25": 0.231,
+        "q75": 0.407
+      }
+    }
+  },
+  "3D-Neuro-SimCLR": {
+    "original_dim": 512,
+    "original_icc": 0.247,
+    "pca_results": {
+      "pc10": {
+        "n_pcs": 10,
+        "var_explained_pct": 99.2,
+        "median_icc": 0.285,
+        "mean_icc": 0.364,
+        "q25": 0.264,
+        "q75": 0.482
+      },
+      "pc20": {
+        "n_pcs": 20,
+        "var_explained_pct": 99.8,
+        "median_icc": 0.276,
+        "mean_icc": 0.303,
+        "q25": 0.228,
+        "q75": 0.4
+      }
+    }
+  },
+  "BrainSegFounder": {
+    "original_dim": 768,
+    "original_icc": 0.307,
+    "pca_results": {
+      "pc10": {
+        "n_pcs": 10,
+        "var_explained_pct": 91.9,
+        "median_icc": 0.756,
+        "mean_icc": 0.624,
+        "q25": 0.369,
+        "q75": 0.833
+      },
+      "pc20": {
+        "n_pcs": 20,
+        "var_explained_pct": 95.3,
+        "median_icc": 0.796,
+        "mean_icc": 0.723,
+        "q25": 0.741,
+        "q75": 0.878
+      }
+    }
+  }
+}
