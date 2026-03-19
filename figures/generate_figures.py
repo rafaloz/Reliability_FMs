@@ -295,18 +295,31 @@ def fig2_variance_and_within(data):
     ax_b = fig.add_subplot(gs[1])
     panel_label(ax_b, "(b)")
 
-    # FreeSurfer at top, then by subject variance descending
-    models_sorted = sort_models(
+    # Build model list: FreeSurfer (harmonized) first, then FreeSurfer,
+    # then FMs by subject variance descending — all reversed for bottom-up plot
+    harm_path = os.path.join(RESULTS_DIR, "results_FreeSurfer_harmonized.json")
+    harm_data = None
+    if os.path.exists(harm_path):
+        with open(harm_path) as f:
+            harm_data = json.load(f)
+
+    fm_models = sort_models(
         data.keys(),
         key_fn=lambda m: np.nanmean(data[m]["variance_decomposition"]["pct_subject"]),
         reverse=True
     )
-    models_sorted = list(reversed(models_sorted))
+    # Build ordered list: harmonized first, then the rest (reversed for barh)
+    models_sorted = list(reversed(fm_models))
+    if harm_data:
+        models_sorted.append("FreeSurfer\n(harmonized)")
 
     y_pos = np.arange(len(models_sorted))
     subj_vals, scan_vals, resid_vals = [], [], []
     for m in models_sorted:
-        vd = data[m]["variance_decomposition"]
+        if m == "FreeSurfer\n(harmonized)":
+            vd = harm_data["variance_decomposition"]
+        else:
+            vd = data[m]["variance_decomposition"]
         subj_vals.append(np.nanmean(vd["pct_subject"]))
         scan_vals.append(np.nanmean(vd["pct_scanner"]))
         resid_vals.append(np.nanmean(vd["pct_residual"]))
