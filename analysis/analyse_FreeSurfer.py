@@ -67,8 +67,17 @@ def load_freesurfer_idps(csv_path):
     # Store original feature names for reference
     df.attrs["feature_names"] = {f"feat_{i}": col for i, col in enumerate(feat_source_cols)}
 
+    # Remove degenerate features: zero/near-zero variance OR high NaN fraction.
+    # The 4 thalamus aseg features have ~50% NaN (missing in many sessions).
+    degenerate = [c for c in feat_cols
+                  if df[c].std() < 1e-10 or df[c].isna().mean() > 0.1]
+    if degenerate:
+        print(f"  Removing {len(degenerate)} degenerate (high-NaN) features")
+        feat_cols = [c for c in feat_cols if c not in degenerate]
+        df = df[["subject_id", "scanner", "session_id"] + feat_cols].copy()
+
     print(f"FreeSurfer IDPs: {len(dkt_cols)} DKT cortical + {len(aseg_cols)} aseg subcortical "
-          f"= {len(feat_cols)} total features")
+          f"= {len(feat_source_cols)} total, {len(feat_cols)} after removing degenerate")
     print(f"  {df['subject_id'].nunique()} subjects, {df['scanner'].nunique()} scanners, "
           f"{len(df)} observations")
 

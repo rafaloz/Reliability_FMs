@@ -407,6 +407,20 @@ def fig3_fingerprint(data):
         ax.annotate(m, (x, y), textcoords="offset points", xytext=(dx, dy),
                     fontsize=7.5, fontweight="bold", ha=ha, color=COLORS[m])
 
+    # ── Harmonized FreeSurfer reference point (scanner-variance lower bound) ──
+    harm_path = os.path.join(RESULTS_DIR, "results_FreeSurfer_harmonized.json")
+    if os.path.exists(harm_path):
+        with open(harm_path) as f:
+            harm = json.load(f)
+        hx = harm["scanner_fingerprint_accuracy"] * 100
+        hy = harm["subject_identification_accuracy"] * 100
+        ax.scatter(hx, hy, s=120, color=COLORS["FreeSurfer"], marker="D",
+                   edgecolors="black", linewidths=0.8, zorder=4)
+        ax.annotate("FreeSurfer\n(harmonized)", (hx, hy),
+                    textcoords="offset points", xytext=(0, -18),
+                    fontsize=6.5, fontstyle="italic", ha="center",
+                    color=COLORS["FreeSurfer"])
+
     ax.set_xlabel("Scanner fingerprint accuracy (%)")
     ax.set_ylabel("Subject identification accuracy (%)")
     ax.set_xlim(0, 100)
