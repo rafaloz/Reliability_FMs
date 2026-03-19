@@ -63,8 +63,9 @@ def load_model_data(model_name, csv_file):
         df = pd.concat([df, feat_data], axis=1)
         df = df.dropna(subset=emb_cols, how="all").reset_index(drop=True)
 
-        # Drop zero-variance features
-        emb_cols = [c for c in emb_cols if df[c].std() > 0]
+        # Drop degenerate features (zero-variance or high NaN fraction)
+        emb_cols = [c for c in emb_cols
+                    if df[c].std() > 1e-10 and df[c].isna().mean() <= 0.1]
         return df, emb_cols
     else:
         emb_cols = [c for c in raw.columns if c.startswith("emb_")]

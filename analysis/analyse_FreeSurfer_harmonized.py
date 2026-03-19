@@ -65,7 +65,7 @@ def load_freesurfer_idps(csv_path):
     degenerate = [c for c in feat_cols
                   if df[c].std() < 1e-10 or df[c].isna().mean() > 0.1]
     if degenerate:
-        print(f"  Removing {len(degenerate)} degenerate (zero-variance) features")
+        print(f"  Removing {len(degenerate)} degenerate (high-NaN or zero-variance) features")
         feat_cols = [c for c in feat_cols if c not in degenerate]
         df = df[["subject_id", "scanner", "session_id"] + feat_cols].copy()
 
@@ -162,7 +162,9 @@ def main():
         description="Reliability analysis — ComBat-harmonized FreeSurfer (DKT)"
     )
     parser.add_argument("--input", type=str,
-                        default="/media/rafa/DATA_4TB/all_idps.csv",
+                        default=os.path.join(os.path.dirname(__file__),
+                                             "..", "DATA",
+                                             "FreeSurfer_IDPs_ON-Harmony.csv"),
                         help="Path to ON-Harmony all_idps.csv")
     parser.add_argument("--participants", type=str,
                         default=os.path.join(os.path.dirname(__file__),
