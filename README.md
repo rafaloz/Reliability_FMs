@@ -21,7 +21,7 @@ This repository contains the preprocessing, embedding extraction, analysis, and 
 | y-Aware | DenseNet-121 | y-Aware InfoNCE | 1,024 |
 | AnatCL | ResNet-18 | Anatomy-aware CL | 512 |
 | BrainSegFounder | Swin-T | Recon+rot+CL | 768 |
-| FreeSurfer (DKT) | — | — | 203 |
+| FreeSurfer (DKT) | — | — | 199 |
 
 ## Repository structure
 
