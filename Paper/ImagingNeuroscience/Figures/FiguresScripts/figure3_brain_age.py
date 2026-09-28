@@ -413,9 +413,9 @@ def render(payload: dict, *, output_dir: Path, dpi: int) -> list[Path]:
 
     axis_difference.set_xlim(0, 12.25)
     axis_difference.set_xticks((0, 4, 8, 12))
-    axis_difference.set_xlabel("Expected scanner change (years)")
+    axis_difference.set_xlabel("Mean absolute difference (years)")
     axis_difference.set_title(
-        "c   Absolute cross-scanner\nsensitivity", loc="left", fontweight="bold"
+        "c   Cross-scanner differences", loc="left", fontweight="bold"
     )
 
     effects = np.asarray(

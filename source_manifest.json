@@ -39,7 +39,7 @@
     },
     {
       "path": "Analyses/tests/test_onharmony_scatter_metrics.py",
-      "sha256": "3f86d1d8b7324c71f8e60710665a359fa991d39b1b91adb5d8a1dad283aa4ffd"
+      "sha256": "9a106723c0958994212b957fd62e2d62436fab7cc2a66d2edfe9836a937d8bc0"
     },
     {
       "path": "Emb_extractors/extract_3DNeuroSimCLR.py",
@@ -375,11 +375,11 @@
     },
     {
       "path": "Paper/ImagingNeuroscience/Figures/FiguresScripts/figure3_brain_age.py",
-      "sha256": "c90f2317de1257e7ad533394938dc94c37e9aea9f0c696e6257276b16c679540"
+      "sha256": "3e870ea8dea144dc6af246fabaa8da7138e2b40e88556a60062f51251e131064"
     },
     {
       "path": "Paper/ImagingNeuroscience/Figures/FiguresScripts/figure4_adaptation.py",
-      "sha256": "86fda0cd9bd4711796a4a261f981b65095afb90835927984d30e7abf93c76191"
+      "sha256": "600a9f457c81be0728c87138928d38db32536b75c1ba02394ba42207cdde69ab"
     },
     {
       "path": "Paper/ImagingNeuroscience/Figures/FiguresScripts/figureS1_model_inputs.py",
@@ -391,23 +391,27 @@
     },
     {
       "path": "Paper/ImagingNeuroscience/Figures/FiguresScripts/figureS3_frozen_ridge_test_scatter.py",
-      "sha256": "58f2cda2a3c06552451cd9b9fea531eb218684b0fcc43851a25eaf42dbe26057"
+      "sha256": "5cf61c15c7c7399489ef13156eb63c37655516b5025e5811e5a23433d67a38ca"
     },
     {
       "path": "Paper/ImagingNeuroscience/Figures/FiguresScripts/figureS4_frozen_ridge_onharmony_scatter.py",
-      "sha256": "79a6416f2684ac1006cd27e9258d890f2b3dd12fa2f564eba932025efdfb5148"
+      "sha256": "5e2ab81e004e90a5a0abc64b63003c58bf43fb3736d16914fd8ed9a07532a94a"
     },
     {
       "path": "Paper/ImagingNeuroscience/Figures/FiguresScripts/figureS5_adapted_test_scatter.py",
-      "sha256": "1c2068e8060f2e58a06a5fce10bcfa35fc1d1c6a578669d6f55f52d9f495fdf1"
+      "sha256": "1b3a7fcebb23945968735bfdb8e65aae17265bcc8a004cdf817769d644d65f26"
     },
     {
       "path": "Paper/ImagingNeuroscience/Figures/FiguresScripts/figureS6_adapted_onharmony_scatter.py",
-      "sha256": "511d9244144b2934ab39c6374efbb1325c963e2443522a903271e4b1319d861e"
+      "sha256": "7f34a29763c0e048bf29dab2991d954972ac24acc288f70e58eac3f5e88d13a5"
     },
     {
       "path": "Paper/ImagingNeuroscience/Figures/FiguresScripts/figureS7_brainiac_lr_sensitivity.py",
       "sha256": "b88ed429cba3294a912b78aab82c926fb458a9a654433a992872174567aeeeb9"
+    },
+    {
+      "path": "Paper/ImagingNeuroscience/Figures/FiguresScripts/scatter_accuracy.py",
+      "sha256": "755a914468514e02665b3405c949abd5ba7b5b207108ba2637af6aa0c643f2f2"
     },
     {
       "path": "Paper/ImagingNeuroscience/Tables/build_model_description_tables.py",

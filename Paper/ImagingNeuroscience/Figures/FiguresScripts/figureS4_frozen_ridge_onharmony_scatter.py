@@ -49,6 +49,8 @@ from Analyses.figure3_brain_age import (  # noqa: E402
 from FineTuning.shared.metrics import regression_metrics  # noqa: E402
 
 
+from Paper.ImagingNeuroscience.Figures.FiguresScripts.scatter_accuracy import accuracy_summary, accuracy_text
+
 DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "Paper" / "ImagingNeuroscience" / "Figures"
 DEFAULT_FIGURE3_RESULTS = (
     PROJECT_ROOT / "Results" / "Figure3" / "figure3_brain_age_results.json"
@@ -280,15 +282,9 @@ def load_conditions(
 
 
 def metric_text(condition: dict) -> str:
-    metrics = condition["accuracy"]
-    mae = np.asarray([record["mae_years"] for record in metrics], dtype=float)
-    r2 = np.asarray([record["r2"] for record in metrics], dtype=float)
-    if len(metrics) == 1:
-        return f"MAE {mae[0]:.2f} y\n$R^2$ {r2[0]:.3f}"
-    return (
-        f"MAE {mae.mean():.2f} $\\pm$ {mae.std(ddof=1):.2f} y\n"
-        f"$R^2$ {r2.mean():.3f} $\\pm$ {r2.std(ddof=1):.3f}"
-    )
+    if "accuracy_summary" not in condition:
+        condition["accuracy_summary"] = accuracy_summary(condition["frames"], external=True)
+    return accuracy_text(condition["accuracy_summary"])
 
 
 def render(conditions: list[dict], output_dir: Path, dpi: int) -> list[Path]:
@@ -320,9 +316,10 @@ def render(conditions: list[dict], output_dir: Path, dpi: int) -> list[Path]:
             AGE_LIMITS, AGE_LIMITS, color="#555D63", linewidth=1.0,
             linestyle=(0, (4, 3)), zorder=1,
         )
-        axis.set_title(
-            f"{PANEL_LETTERS[index]}   {condition['label']}", loc="left",
-            fontweight="bold", pad=7,
+        axis.text(
+            0.0, 1.04, f"{PANEL_LETTERS[index]}   {condition['label']}",
+            transform=axis.transAxes, ha="left", va="bottom",
+            fontsize=10, fontweight="bold", clip_on=False,
         )
         axis.text(
             0.04, 0.95, metric_text(condition), transform=axis.transAxes,
@@ -352,13 +349,16 @@ def render(conditions: list[dict], output_dir: Path, dpi: int) -> list[Path]:
         ncol=2, frameon=False, handletextpad=0.5, columnspacing=0.9,
         labelspacing=0.50, fontsize=7.8, title_fontsize=8.5,
     )
-    figure.supxlabel("Chronological age (years)", y=0.018, fontsize=10.5)
-    figure.supylabel("Predicted age (years)", x=0.025, fontsize=10.5)
+    figure.text(0.5, 0.018, "Chronological age (years)", ha="center", va="bottom", fontsize=10.5)
+    figure.text(0.025, 0.5, "Predicted age (years)", ha="left", va="center", rotation=90, fontsize=10.5)
     figure.suptitle(
         "ON-Harmony predictions: frozen embeddings with Ridge regression",
         x=0.105, y=0.982, ha="left", fontsize=12, fontweight="bold",
     )
 
+    # Resolve shared-axis aspect ratios before the tight-bounding-box export.
+    figure.set_dpi(dpi)
+    figure.canvas.draw()
     output_dir.mkdir(parents=True, exist_ok=True)
     outputs = [
         output_dir / "FigureS4_frozen_ridge_onharmony_scatter.png",
@@ -407,7 +407,7 @@ def main() -> None:
     atomic_json(
         manifest_path,
         {
-            "figure": "Supplementary Figure S9: frozen-Ridge ON-Harmony predictions",
+            "figure": "Supplementary Figure S4: frozen-Ridge ON-Harmony predictions",
             "cohort": {
                 "source_acquisitions": 165,
                 "primary_acquisitions": 120,
@@ -426,6 +426,7 @@ def main() -> None:
             "figure3_results_sha256": sha256_file(results_path),
             "figure3_analysis_script_sha256": locked["code"]["analysis_script_sha256"],
             "script": str(SCRIPT_PATH),
+            "accuracy_summaries": {c["condition"]: c["accuracy_summary"] for c in conditions},
             "script_sha256": sha256_file(SCRIPT_PATH),
             "sources": sources,
             "displayed_accuracy": {

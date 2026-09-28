@@ -68,7 +68,7 @@ python -m pip install -r requirements-tests.txt
 python -m pytest Analyses/tests FineTuning/shared/tests -q
 ```
 
-Checked from this data-free source copy on 2026-09-08: **142 tests and 279
+Checked from this data-free source copy on 2026-09-28: **142 tests and 277
 subtests passed**, using local Conda Python 3.10 and PyTorch 2.5.1 CPU.
 This was a run in the existing environment, not a fresh-install verification
 of `requirements-tests.txt`. Only dependency deprecation warnings were emitted.
@@ -88,6 +88,15 @@ preprocessing or establish actual checkpoint loading.
 MRI, demographics, participant manifests, embeddings, individual predictions,
 training artifacts, QC exports and manuscript PDFs are excluded. Obtain data
 and model releases from their owners under their access conditions and licenses.
+
+Data sources are ON-Harmony (`ds004712`, version 2.0.1), NeuroCog (`ds003592`,
+with demographics on OSF `yhzxe`), NIMH-RV (`ds004215`), MR-ART (`ds004173`),
+[WAND](https://doi.org/10.12751/g-node.5mv3bf), and
+[CamCAN](https://opendata.mrc-cbu.cam.ac.uk/projects/camcan/).
+The four OpenNeuro datasets are distributed under CC0; WAND uses CC BY 4.0.
+CamCAN requires approved access and its own data-use agreement. This source-only
+release does not itself fulfill CamCAN's separate requirement to share derived
+data. A suitable derived-data deposit remains to be prepared under that agreement.
 
 Validators pin the study cohort and artifact hashes. Arbitrary replacement
 manifests are rejected. A different cohort requires a separately versioned
