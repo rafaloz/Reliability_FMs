@@ -22,6 +22,7 @@ Snapshots/
 *.ckpt
 *.safetensors
 *.csv
+!/data/camcan_derivatives/**/*.csv
 *.tsv
 *.xlsx
 *.xls

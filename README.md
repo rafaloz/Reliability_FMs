@@ -68,8 +68,28 @@ with demographics on OSF `yhzxe`), NIMH-RV (`ds004215`), MR-ART (`ds004173`),
 The four OpenNeuro datasets are distributed under CC0; WAND uses CC BY 4.0.
 CamCAN requires approved access and its own data-use agreement.
 
+### CamCAN derivatives
+
+[CSV derivatives](data/camcan_derivatives/) contain frozen embeddings for the
+650 CamCAN participants and validation/test predictions, separated by model,
+fold and seed. Original CamCAN study IDs are retained. The package contains no
+raw images, true ages, sex, prediction errors or filesystem paths.
+
+See the [data dictionary](data/camcan_derivatives/data_dictionary.csv),
+[inventory](data/camcan_derivatives/inventory.csv), and
+[deposit notes](data/camcan_derivatives/deposit_notes.csv).
+The exporter is `tools/prepare_camcan_derivatives.py`.
+
+CamCAN data collection and sharing were funded by the UK Biotechnology and
+Biological Sciences Research Council (BB/H008217/1), with support from the UK
+Medical Research Council and the University of Cambridge.
+Please cite [Shafto et al. (2014)](https://doi.org/10.1186/s12883-014-0204-1)
+and the accompanying study when using these derivatives.
+
 ## License
 
-The repository retains Apache-2.0. External implementations, weights, software
-and datasets retain their own licenses and access terms; they are not
-relicensed or redistributed here.
+The source code is licensed under Apache-2.0. This license does not apply to
+`data/camcan_derivatives/`; consult the
+[CamCAN data-use terms](https://opendata.mrc-cbu.cam.ac.uk/projects/camcan/).
+External implementations, weights, software and datasets retain their own
+licenses and access terms.

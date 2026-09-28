@@ -1,5 +1,5 @@
 {
-  "scope": "source-only candidate; not a data release",
+  "scope": "source code manifest; derivative CSVs have a separate data/camcan_derivatives/inventory.csv",
   "files": [
     {
       "path": "Analyses/figure2_reliability.py",
@@ -532,6 +532,14 @@
     {
       "path": "preprocessings/QC_NeuroVFM_visual.py",
       "sha256": "124c0e3b475d17187c8482b3b37d0534755e3bbd1580b97b3d4a14fc84e21593"
+    },
+    {
+      "path": "tools/prepare_camcan_derivatives.py",
+      "sha256": "0f4f8cf45833710b085c444ff4d2c4d82167ece49dd77684e447f93bdf7f7cb1"
+    },
+    {
+      "path": "tools/tests/test_prepare_camcan_derivatives.py",
+      "sha256": "b01e9d7b3564e56ae60e8cd37c61744aeffb07dc20b66a351ea96a0ded19dc3d"
     }
   ]
 }
