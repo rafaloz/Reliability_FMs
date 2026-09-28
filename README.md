@@ -3,21 +3,6 @@
 Source code for **Cross-Scanner Reliability of Brain MRI Foundation Models:
 A Travelling-Heads Study**.
 
-## Publication candidate
-
-This branch contains the reviewed implementation of the seven-model benchmark
-and its brain-age extension. It is a source-code release, not a distribution of
-participant data, pretrained weights, or a turnkey reproduction environment.
-The earlier implementation remains under the
-[`legacy-original-code`](https://github.com/rafaloz/Reliability_FMs/tree/legacy-original-code)
-tag for transparency; it is not the current analysis.
-
-Scientific sources are copied without rewriting their contents.
-`source_manifest.json` records their SHA-256 values, preserving code identities
-used by the study's audit contracts. Study-specific path defaults and historical
-migration records remain in the code. Supply explicit paths through command-line
-options where supported; check paths and environments before using any launcher.
-
 ## Layout
 
 - `preprocessings/`: model-specific preprocessing and visual QC.
