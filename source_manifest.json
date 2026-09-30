@@ -22,26 +22,6 @@
       "sha256": "2c346ac5fca1352a4a53478303c8bbcabcb9ab94c2329c605f7cc1b1a841fba0"
     },
     {
-      "path": "Analyses/tests/test_dbicc_scaling_sensitivity.py",
-      "sha256": "bd4245ce2b9fbf43eefb1cc8173f6271ed4ee3bcd4ceef0170700494f976c401"
-    },
-    {
-      "path": "Analyses/tests/test_figure2_reliability.py",
-      "sha256": "73136439017ab46fe3953f7abbf44b3d73f15fc8afc3b4698931d7c958059a9a"
-    },
-    {
-      "path": "Analyses/tests/test_figure3_brain_age.py",
-      "sha256": "21fce9762b365cda84f85a39b878b52ec964afe613f9876188f82e305e555e03"
-    },
-    {
-      "path": "Analyses/tests/test_figure4_adaptation.py",
-      "sha256": "65f63f543a0c5c9b39b8b1e6a2fd94f1b4018dec19d71a3e3337a228d57af52c"
-    },
-    {
-      "path": "Analyses/tests/test_onharmony_scatter_metrics.py",
-      "sha256": "9a106723c0958994212b957fd62e2d62436fab7cc2a66d2edfe9836a937d8bc0"
-    },
-    {
       "path": "Emb_extractors/extract_3DNeuroSimCLR.py",
       "sha256": "01ea9a31cd533e65ce3a2656e281e9e8a6ac33d85daae61f8141bf1f3339e119"
     },
@@ -102,12 +82,8 @@
       "sha256": "1a7d8b15fd0aaf87a262ba8e5f95e16084a20726e8a193275ca14ebadba2b09b"
     },
     {
-      "path": "FineTuning/3DNeuroSimCLR/tests/test_3dneurosimclr.py",
-      "sha256": "1e394a556cfa2dfe44104d3edb5e87300defca6dc7b217d759a85f5e52382293"
-    },
-    {
       "path": "FineTuning/AnatCL/README.md",
-      "sha256": "69434f16d72d696f40f72928b910e56f1e9b0022287b19f598ad8ddb52bb97be"
+      "sha256": "b5f9467d6f4059c0a619a82b3a4bbd0bf30bfbeb5c441557e2f87f158a1d822e"
     },
     {
       "path": "FineTuning/AnatCL/extract_embeddings.py",
@@ -128,10 +104,6 @@
     {
       "path": "FineTuning/AnatCL/predict_onharmony.py",
       "sha256": "d8c9bc6e2d2b0b3b8d175475f383fbbdc573fe332c5c2bdc3307aca4986f48fd"
-    },
-    {
-      "path": "FineTuning/AnatCL/tests/test_anatcl.py",
-      "sha256": "85e3e21b72361a43db606688cce3f213a83ea586ffe189d9359700da1a65abf8"
     },
     {
       "path": "FineTuning/BrainIAC/README.md",
@@ -158,10 +130,6 @@
       "sha256": "f584efd23963a53c4d2e2b6935116f43efa981d69c34a32134d0151f4501bf93"
     },
     {
-      "path": "FineTuning/BrainIAC/tests/test_brainiac.py",
-      "sha256": "5384fcba0c1ff01c7d3c66ca921acbcd777fb6b1e007514c371a8c72f1294bf5"
-    },
-    {
       "path": "FineTuning/BrainSegFounder/README.md",
       "sha256": "9655b3e615b900e38adb0c0229f97586e2e4c625d46d58a193aeb99b29490cb2"
     },
@@ -186,12 +154,8 @@
       "sha256": "838a3ecf78c73a94d67a060469c0fdac732609ea30227279befe06417d48db25"
     },
     {
-      "path": "FineTuning/BrainSegFounder/tests/test_brainsegfounder.py",
-      "sha256": "f7b0eab79d23c493af7a1528953075d0dd05dc81d0e20b115e7d26b9a62627a5"
-    },
-    {
       "path": "FineTuning/Curia2/README.md",
-      "sha256": "3ccdf9207a2add992c50da8caaecf3b4f783f1c72bb0138337b493aa06c7f2d0"
+      "sha256": "ff1d34b15a2de7c9c2d64b6ea4d68a804c45882f060a56a0c33a522e4ed6bf4f"
     },
     {
       "path": "FineTuning/Curia2/__init__.py",
@@ -218,16 +182,8 @@
       "sha256": "c0de9b7b6f0797fc0c43a603b3a1cd333a566cd53684f3a219e9758260bd6532"
     },
     {
-      "path": "FineTuning/Curia2/tests/__init__.py",
-      "sha256": "c627a9598c838b7ed462a518818d39d3dc4407d1a47bfb30154fd326a43cd037"
-    },
-    {
-      "path": "FineTuning/Curia2/tests/test_curia2.py",
-      "sha256": "704e401b7f3a0a0d6b5e6df8ca58e78218d2b15a1df28e05ea22690b5fea0a7d"
-    },
-    {
       "path": "FineTuning/NeuroVFM/README.md",
-      "sha256": "541dc76f6500a95f5eb0e4fc77e67a384d4c62e04d26c24f38a5ee48b1c41d91"
+      "sha256": "1e44d946c6de14e4795f44c5e61174823c46118208ea942489d2b26b30943954"
     },
     {
       "path": "FineTuning/NeuroVFM/__init__.py",
@@ -254,20 +210,12 @@
       "sha256": "103b762469c3e2d00e0b9321aa73babfd203523f01c7c21816009c0c673f6a65"
     },
     {
-      "path": "FineTuning/NeuroVFM/tests/__init__.py",
-      "sha256": "138dd12e19a136fbc3c064e905220408c5b46b60b5f7e41ff1fc7818ec0823af"
-    },
-    {
-      "path": "FineTuning/NeuroVFM/tests/test_neurovfm.py",
-      "sha256": "019263a93f6163ac0dc97aa3e4ebee921b0e4049b371e39765595b58d6d0629d"
-    },
-    {
       "path": "FineTuning/ONHARMONY_INFERENCE.md",
       "sha256": "c0e6ecf7eee88a2e7803d4ccf1ec4340df6ea2af79b6d9c85f9eb0290cf5d595"
     },
     {
       "path": "FineTuning/README.md",
-      "sha256": "f982f6bb84b3af3f787b574fcfbfb29f9dbb12d66bf01a6049b71d2ee02f916b"
+      "sha256": "b0af0717e328c9f4fc4f0e1c8a04d4694024899fe59db0122d517c938e051c83"
     },
     {
       "path": "FineTuning/__init__.py",
@@ -330,20 +278,8 @@
       "sha256": "bdb12668e6d3c4f88326212014c0216104ffaea4d99add95eab9df5818636c3b"
     },
     {
-      "path": "FineTuning/shared/tests/test_embedding_bundle.py",
-      "sha256": "25737abeb7c3d61ac34c176ea24dc5c40fdd78132538c4094491e58fa806902b"
-    },
-    {
-      "path": "FineTuning/shared/tests/test_internal_test_receipt.py",
-      "sha256": "7f2478613ae325c75e30ad30ee91060ed8075f8030fd239607d697794a8b1801"
-    },
-    {
-      "path": "FineTuning/shared/tests/test_onharmony.py",
-      "sha256": "b29ffcc3622a47ac18a8170ed19e23f9e2c83a15a261b351c787e6b267387edb"
-    },
-    {
       "path": "FineTuning/yAware/README.md",
-      "sha256": "623efac41e5c48e4ed7f50c8ab234c7e43ea9356457b5ac6d38a59dcc5601c08"
+      "sha256": "851dfc44e12351fae34737831c2ef3adce6d1c4d29f0ebddf6abd54c9136730e"
     },
     {
       "path": "FineTuning/yAware/extract_embeddings.py",
@@ -364,10 +300,6 @@
     {
       "path": "FineTuning/yAware/predict_onharmony.py",
       "sha256": "98b2f12c0625b633c38d908ac98c36dcf1a3db37a0e1738823bd80b6fa23d24f"
-    },
-    {
-      "path": "FineTuning/yAware/tests/test_yaware.py",
-      "sha256": "4babe195423590ee26c54b71a46b978602d5a304decf9790766aee594b2fd4ce"
     },
     {
       "path": "Paper/ImagingNeuroscience/Figures/FiguresScripts/figure2_reliability.py",
@@ -450,38 +382,6 @@
       "sha256": "a2540ad14288ee40adc84878b18694249593471eec9fef1d58de5a86790766ce"
     },
     {
-      "path": "preprocessings/FineTunningDataset/tests/test_preprocessing_3dneurosimclr.py",
-      "sha256": "833dd7080cf49934f41fe690a56df5a34be74e435738a15869bcd86ee3482a98"
-    },
-    {
-      "path": "preprocessings/FineTunningDataset/tests/test_preprocessing_brainiac.py",
-      "sha256": "f453f87b88d536ce133ee6cee3c85e8ee786316ae99b2a3beee5ee3ecfe0f599"
-    },
-    {
-      "path": "preprocessings/FineTunningDataset/tests/test_preprocessing_brainsegfounder.py",
-      "sha256": "c8f43ec1d3f485c3af9783c5c5f1c9a4cda9f129ecd5a99699b1fce35518d9a5"
-    },
-    {
-      "path": "preprocessings/FineTunningDataset/tests/test_qc_brainiac_visual.py",
-      "sha256": "e2bcf1640015b98ea89b916f954a80518bac11e6f2a3a719d087237a9940b9f9"
-    },
-    {
-      "path": "preprocessings/FineTunningDataset/tests/test_qc_brainsegfounder_visual.py",
-      "sha256": "ef34cf5652b082230cdadf3da6efacc0c4aee96bf45e2eb0f50595df8717e4fd"
-    },
-    {
-      "path": "preprocessings/FineTunningDataset/tests/test_qc_cat12_visual.py",
-      "sha256": "0f3395d24e7b999b2fd22754b5c59bf90ff2e98fd15acccb038eb8e26840c938"
-    },
-    {
-      "path": "preprocessings/FineTunningDataset/tests/test_qc_curia2_visual.py",
-      "sha256": "df7662f52441927557db31937a9949ccaeb74496c597e8658b05c2d68dd39fbc"
-    },
-    {
-      "path": "preprocessings/FineTunningDataset/tests/test_qc_neurovfm_visual.py",
-      "sha256": "14532eab249e9061a9dea967d55ff35ee08c95bfbad8a5a5b45c521fc7b1d525"
-    },
-    {
       "path": "preprocessings/OnHarmonyDataset/QC_preprocs.py",
       "sha256": "26789f6fd570c1ff6e94410ab4ccf79a07031b6fc3f2789eec0b83148c9360fe"
     },
@@ -536,10 +436,6 @@
     {
       "path": "tools/prepare_camcan_derivatives.py",
       "sha256": "0f4f8cf45833710b085c444ff4d2c4d82167ece49dd77684e447f93bdf7f7cb1"
-    },
-    {
-      "path": "tools/tests/test_prepare_camcan_derivatives.py",
-      "sha256": "b01e9d7b3564e56ae60e8cd37c61744aeffb07dc20b66a351ea96a0ded19dc3d"
     }
   ]
 }

@@ -145,10 +145,3 @@ output once per acquisition, including repeated sessions. Its `audit` and
 never rerun raw preprocessing inside an epoch. See
 [`../ONHARMONY_INFERENCE.md`](../ONHARMONY_INFERENCE.md) for the retained runs,
 label-blind output contract, and required command sequence.
-
-## Tests
-
-```bash
-MPLCONFIGDIR=/tmp/matplotlib-finetuning \
-python -m unittest discover -s FineTuning/NeuroVFM/tests -v
-```

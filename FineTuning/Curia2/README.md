@@ -107,10 +107,3 @@ head and generates label-blind predictions for the canonical 165 acquisitions.
 It does not apply the training-cohort loader or access chronological age. See
 [`../ONHARMONY_INFERENCE.md`](../ONHARMONY_INFERENCE.md) for the retained runs,
 audit command, output contract, and sequencing rules.
-
-## Tests
-
-```bash
-MPLCONFIGDIR=/tmp/matplotlib-finetuning \
-python -m unittest discover -s FineTuning/Curia2/tests -v
-```

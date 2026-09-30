@@ -9,14 +9,14 @@ A Travelling-Heads Study**.
 - `Emb_extractors/`: ON-Harmony frozen extraction, including the separate
   BrainSegFounder BF16 extractor used for precision alignment.
 - `FineTuning/`: seven model adapters, Ridge, fine-tuning, evaluation and guards.
-- `Analyses/`: current representation, prediction and adaptation analyses/tests.
+- `Analyses/`: current representation, prediction and adaptation analyses.
 - `Paper/ImagingNeuroscience/Figures/FiguresScripts/`: main and supplementary
   figure generators; analysis artifacts must be generated separately.
 - `Paper/ImagingNeuroscience/Tables/`: model descriptions and dbICC scaling
   sensitivity. The manuscript's comparative results table is not generated here.
 - `Supplementary/`: AnatCL-SimCLR extractor and the BrainSegFounder selection
-  migration helper required by the model tests.
-- `ExcelsChecks/`: source-only BrainIAC precision audit imported by its tests;
+  migration helper.
+- `ExcelsChecks/`: source-only BrainIAC precision audit;
   no participant spreadsheets or audit data are included.
 
 Models: y-Aware, AnatCL, 3D-Neuro-SimCLR, BrainIAC, BrainSegFounder, NeuroVFM,
@@ -43,15 +43,7 @@ Figure 3 separates test MAE, predicted-age dbICC and absolute cross-scanner chan
 Figure 4 uses paired gains and global BH correction over seven models and three
 endpoints. Metrics are averaged across retained runs, not predictions.
 
-## Environment and tests
-
-`requirements-tests.txt` pins local Python versions for CPU tests, not the GPU
-training environment. Install in a dedicated environment:
-
-```bash
-python -m pip install -r requirements-tests.txt
-python -m pytest Analyses/tests FineTuning/shared/tests -q
-```
+## Environment
 
 GPU execution needs model-specific dependencies and official checkpoint/code
 revisions checked by each `FineTuning/<model>/model.py`. NeuroVFM requires its
@@ -67,24 +59,6 @@ with demographics on OSF `yhzxe`), NIMH-RV (`ds004215`), MR-ART (`ds004173`),
 [CamCAN](https://opendata.mrc-cbu.cam.ac.uk/projects/camcan/).
 The four OpenNeuro datasets are distributed under CC0; WAND uses CC BY 4.0.
 CamCAN requires approved access and its own data-use agreement.
-
-### CamCAN derivatives
-
-[CSV derivatives](data/camcan_derivatives/) contain frozen embeddings for the
-650 CamCAN participants and validation/test predictions, separated by model,
-fold and seed. Original CamCAN study IDs are retained. The package contains no
-raw images, true ages, sex, prediction errors or filesystem paths.
-
-See the [data dictionary](data/camcan_derivatives/data_dictionary.csv),
-[inventory](data/camcan_derivatives/inventory.csv), and
-[deposit notes](data/camcan_derivatives/deposit_notes.csv).
-The exporter is `tools/prepare_camcan_derivatives.py`.
-
-CamCAN data collection and sharing were funded by the UK Biotechnology and
-Biological Sciences Research Council (BB/H008217/1), with support from the UK
-Medical Research Council and the University of Cambridge.
-Please cite [Shafto et al. (2014)](https://doi.org/10.1186/s12883-014-0204-1)
-and the accompanying study when using these derivatives.
 
 ## License
 

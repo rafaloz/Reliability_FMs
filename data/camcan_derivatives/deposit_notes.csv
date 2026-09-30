@@ -9,3 +9,5 @@ identifier_policy,Original CamCAN study IDs retained for linkage; these are not 
 manifest_sha256,b2ee2dc7e06349ef1ac550da2061274ee724d2b121ddd652b37c1907ae8bc212
 export_script_sha256,0f4f8cf45833710b085c444ff4d2c4d82167ece49dd77684e447f93bdf7f7cb1
 camcan_terms,https://opendata.mrc-cbu.cam.ac.uk/projects/camcan/
+acknowledgements,"CamCAN data collection and sharing were funded by the UK Biotechnology and Biological Sciences Research Council (BB/H008217/1), with support from the UK Medical Research Council and the University of Cambridge."
+citation,Please cite Shafto et al. (2014) https://doi.org/10.1186/s12883-014-0204-1 and the accompanying study when using these derivatives.

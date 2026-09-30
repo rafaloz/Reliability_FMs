@@ -11,7 +11,6 @@ BHB-10K y-Aware checkpoint:
 - `predict_onharmony.py`: applies a retained adapted checkpoint to ON-Harmony
   without loading chronological age or other outcomes;
 - `model.py`: owns checkpoint, input, readout, and trainable-boundary contracts;
-- `tests/`: checks cohort, preprocessing, checkpoint, readout, and locking rules.
 
 The model consumes the complete `1 x 121 x 145 x 121` z-scored NumPy view
 created by the shared CAT12/IXI555 preprocessing. It does not crop or normalize
@@ -120,9 +119,3 @@ shared preprocessing log, restores `denseblock4` and the locked age head, and
 generates label-blind predictions for all 165 acquisitions. See
 [`../ONHARMONY_INFERENCE.md`](../ONHARMONY_INFERENCE.md) for retained runs,
 audit command, and output contract.
-
-## Tests
-
-```bash
-python -m unittest discover -s FineTuning/yAware/tests -v
-```

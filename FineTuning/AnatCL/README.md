@@ -200,10 +200,3 @@ generator. Run it for the five folds at seed 0 and separately for fold 0 seeds
 1 and 2; do not pool fold and seed sensitivity. See
 [`../ONHARMONY_INFERENCE.md`](../ONHARMONY_INFERENCE.md) for the seven retained
 runs, audit command, and label-blind output contract.
-
-## Tests
-
-```bash
-MPLCONFIGDIR=/tmp/matplotlib-finetuning \
-python -m unittest discover -s FineTuning/AnatCL/tests -v
-```

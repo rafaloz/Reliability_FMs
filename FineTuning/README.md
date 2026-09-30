@@ -42,27 +42,6 @@ Frozen embedding artifacts use the common layout
 and `internal_test`; only the first two may be passed to Ridge fitting or model
 selection.
 
-## Full regression suite
-
-Run the suites explicitly; plain `unittest discover` does not descend into all
-model test directories and therefore reports only a partial run:
-
-```bash
-MPLCONFIGDIR=/tmp/mpl-finetuning-tests python -m unittest -v \
-  FineTuning.3DNeuroSimCLR.tests.test_3dneurosimclr \
-  FineTuning.AnatCL.tests.test_anatcl \
-  FineTuning.BrainIAC.tests.test_brainiac \
-  FineTuning.BrainSegFounder.tests.test_brainsegfounder \
-  FineTuning.Curia2.tests.test_curia2 \
-  FineTuning.NeuroVFM.tests.test_neurovfm \
-  FineTuning.yAware.tests.test_yaware \
-  FineTuning.shared.tests.test_embedding_bundle \
-  FineTuning.shared.tests.test_internal_test_receipt \
-  FineTuning.shared.tests.test_onharmony
-```
-
-The audited baseline is 289 passing tests.
-
 ## Locked internal-test evaluation
 
 `launch_internal_test_adapted.sh` is the single entry point for opening the
