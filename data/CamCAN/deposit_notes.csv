@@ -1,6 +1,6 @@
 item,description
 status,CSV derivative deposit for the accompanying study.
-scope,"CamCAN derivatives only; seven models, eleven frozen representations and 25 retained adapted runs."
+scope,"All CamCAN derived rows, consolidated by model and output type."
 subjects,"650 unique participants: train521, validation65, internal_test64."
 excluded,"No raw MRI, true ages, sex, error/BAG columns, source demographics or filesystem paths."
 limitations,"Not a complete reproduction dataset; excludes other cohorts, processed images and model weights."

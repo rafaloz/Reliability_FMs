@@ -436,6 +436,10 @@
     {
       "path": "tools/prepare_onharmony_derivatives.py",
       "sha256": "62c5afaea388959b189e5dca7bf175ab14ea6e30c4a0cb0a487dd44b9a6a54c8"
+    },
+    {
+      "path": "tools/compact_derivatives.py",
+      "sha256": "2a659e95e55dfce0a10acd045b1e1363fe2757e29e8df580d54e2eb15a97e524"
     }
   ]
 }

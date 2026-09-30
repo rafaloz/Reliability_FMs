@@ -6,7 +6,7 @@ A Travelling-Heads Study**.
 ## Layout
 
 - `data/`: derived CSVs organised by dataset; sources and attribution are in
-  `data/sources.csv`. Each dataset includes an inventory and data dictionary.
+  `data/sources.csv`. The compact layout is described below.
 - `preprocessings/`: model-specific preprocessing and visual QC.
 - `Emb_extractors/`: ON-Harmony frozen extraction, including the separate
   BrainSegFounder BF16 extractor used for precision alignment.
@@ -42,6 +42,32 @@ Figure 2 uses native squared-distance dbICC and crossed REML variance components
 Figure 3 separates test MAE, predicted-age dbICC and absolute cross-scanner change.
 Figure 4 uses paired gains and global BH correction over seven models and three
 endpoints. Metrics are averaged across retained runs, not predictions.
+
+## Result data
+
+The deposit contains 22 data CSVs, plus inventories and dictionaries:
+
+- Each development dataset has one `predictions.csv`, with model, run, fold,
+  seed and split recorded in columns. Internal-test predictions are retained
+  for every model and run; CamCAN also retains validation predictions.
+- `data/ON-Harmony/` contains nine embedding CSVs (seven FMs, AnatCL-SimCLR
+  and FreeSurfer) and one prediction CSV. All 165 acquisitions are retained;
+  `primary_acquisition` identifies the 120 used in primary analyses.
+- `data/CamCAN/embeddings/` retains seven CSVs containing all frozen features
+  from train, validation and internal test as part of the CamCAN derivative
+  deposit. Folds remain separate rows, not averaged vectors.
+
+True ages are not redistributed. MAE, R-squared and age-scatter plots require
+demographics obtained from the original datasets and joined by dataset and
+participant ID. Cross-scanner dbICC and mean absolute pairwise differences
+can be calculated without ages. Seeds and folds must be analysed separately
+before averaging their metrics; predictions are not ensembled.
+
+Inventories map each original export to its compact file; `rows` refers to
+that original export, not the whole compact file. The existing analysis
+commands use the original audited study bundles, not these compact CSVs
+directly. `tools/compact_derivatives.py` converts validated per-run exports
+into this layout without changing retained numeric values.
 
 ## Environment
 
