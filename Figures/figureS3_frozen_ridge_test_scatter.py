@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render locked internal-test scatterplots for the seven adapted models."""
+"""Render locked internal-test scatterplots for the seven frozen-Ridge models."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from pathlib import Path
 import sys
 import tempfile
 
-os.environ.setdefault("MPLCONFIGDIR", f"/tmp/matplotlib-supp-adapted-{os.getuid()}")
+os.environ.setdefault("MPLCONFIGDIR", f"/tmp/matplotlib-supp-ridge-{os.getuid()}")
 Path(os.environ["MPLCONFIGDIR"]).mkdir(parents=True, exist_ok=True)
 
 import matplotlib as mpl
@@ -20,28 +20,28 @@ import numpy as np
 
 
 SCRIPT_PATH = Path(__file__).resolve()
-PROJECT_ROOT = SCRIPT_PATH.parents[4]
+PROJECT_ROOT = SCRIPT_PATH.parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from Analyses.figure3_brain_age import (  # noqa: E402
-    EXPECTED_INTERNAL_TEST_ROWS,
-    internal_test_table,
-)
-from Analyses.figure4_adaptation import (  # noqa: E402
-    DEFAULT_ADAPTED_AUDIT,
+    DEFAULT_ANATCL_FROZEN_INTERNAL_ROOT,
+    DEFAULT_ANATCL_FROZEN_ONHARMONY_ROOT,
     DEFAULT_BRAIN_AGE_ROOT,
+    EXPECTED_INTERNAL_TEST_ROWS,
     MODEL_SPECS,
-    validate_adapted_internal_test,
-    validate_global_adapted_audit,
+    frozen_prediction_dirs,
+    internal_test_table,
+    load_internal_test_predictions,
+    validate_internal_test_metrics,
 )
 
 
-from Paper.ImagingNeuroscience.Figures.FiguresScripts.scatter_accuracy import accuracy_summary, accuracy_text
+from Figures.scatter_accuracy import accuracy_summary, accuracy_text
 
-DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "Paper" / "ImagingNeuroscience" / "Figures"
+DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "Figures"
 DEFAULT_MANIFEST = (
-    PROJECT_ROOT / "Results" / "FigureS5" / "adapted_scatter_manifest.json"
+    PROJECT_ROOT / "Results" / "FigureS3" / "frozen_ridge_scatter_manifest.json"
 )
 
 DATASET_ORDER = ("CamCAN", "NeuroCog", "WAND", "MR-ART", "NIMH-RV")
@@ -96,7 +96,7 @@ def configure_matplotlib() -> None:
             "axes.spines.top": False,
             "axes.spines.right": False,
             "svg.fonttype": "none",
-            "svg.hashsalt": "supp-adapted-scatter-v1",
+            "svg.hashsalt": "supp-frozen-ridge-scatter-v1",
             "savefig.facecolor": "white",
         }
     )
@@ -128,50 +128,52 @@ def validate_reported_metrics(observed: dict, reported: dict, label: str) -> Non
 
 
 def load_conditions(
-    brain_age_root: Path, adapted_audit: Path
-) -> tuple[list[dict], list[dict], dict]:
-    global_audit, source_map = validate_global_adapted_audit(adapted_audit)
+    brain_age_root: Path,
+    anatcl_internal_root: Path,
+    anatcl_onharmony_root: Path,
+) -> tuple[list[dict], list[dict]]:
     conditions = []
     sources = []
     reference_identity = None
     for spec in MODEL_SPECS:
         frames = []
         metrics = []
-        for run in spec.primary_runs:
-            target = f"{spec.model_dir}/{run.run}"
-            internal_dir = (
-                brain_age_root / "internal_test" / "adapted" / spec.model_dir / run.run
+        for variant in spec.variants:
+            internal_dir, _ = frozen_prediction_dirs(
+                brain_age_root,
+                spec=spec,
+                variant=variant,
+                anatcl_internal_root=anatcl_internal_root,
+                anatcl_onharmony_root=anatcl_onharmony_root,
             )
             predictions_path = internal_dir / "predictions_internal_test.tsv"
             metrics_path = internal_dir / "metrics_internal_test.json"
-            frame, provenance = validate_adapted_internal_test(
+            provenance = validate_internal_test_metrics(
                 metrics_path,
                 predictions_path,
                 spec=spec,
-                run=run,
-                source=source_map[target],
+                variant=variant,
             )
-            payload = json.loads(metrics_path.read_text(encoding="utf-8"))
+            frame = load_internal_test_predictions(predictions_path)
             observed = recompute_metrics(frame)
-            validate_reported_metrics(observed, payload["metrics"], target)
+            validate_reported_metrics(
+                observed, provenance["reported_metrics"], f"{spec.label}/{variant}"
+            )
             identity = internal_test_table(frame)
             if reference_identity is None:
                 reference_identity = identity
             elif not identity.equals(reference_identity):
-                raise ValueError(f"Internal-test cohort mismatch for {target}")
+                raise ValueError(f"Internal-test cohort mismatch for {spec.label}/{variant}")
             frames.append(frame)
             metrics.append(observed)
             sources.append(
                 {
                     "model": spec.label,
-                    "run": run.run,
-                    "seed": run.seed,
-                    "fold": run.fold,
+                    "variant": variant,
                     "predictions": str(predictions_path.resolve()),
                     "predictions_sha256": provenance["predictions_sha256"],
                     "metrics": str(metrics_path.resolve()),
                     "metrics_sha256": provenance["metrics_sha256"],
-                    "checkpoint_sha256": provenance["checkpoint_sha256"],
                 }
             )
         conditions.append(
@@ -180,7 +182,9 @@ def load_conditions(
                 "label": spec.label,
                 "frames": frames,
                 "metrics": metrics,
-                "run_definition": spec.primary_definition,
+                "run_definition": (
+                    "five pretrained folds" if spec.condition == "anatcl" else "one run"
+                ),
             }
         )
     if reference_identity is None or len(reference_identity) != EXPECTED_INTERNAL_TEST_ROWS:
@@ -188,7 +192,7 @@ def load_conditions(
     observed_datasets = set(reference_identity["dataset"].astype(str))
     if observed_datasets != set(DATASET_ORDER):
         raise ValueError(f"Unexpected internal-test datasets: {sorted(observed_datasets)}")
-    return conditions, sources, global_audit
+    return conditions, sources
 
 
 def metric_text(condition: dict) -> str:
@@ -217,15 +221,18 @@ def render(conditions: list[dict], output_dir: Path, dpi: int) -> list[Path]:
         panel_axes.append(figure.add_subplot(grid[row, column], sharex=shared, sharey=shared))
 
     for index, (axis, condition) in enumerate(zip(panel_axes, conditions)):
-        for frame in condition["frames"]:
+        frames = condition["frames"]
+        point_alpha = 0.55 if len(frames) == 1 else 0.25
+        point_size = 16 if len(frames) == 1 else 12
+        for frame in frames:
             for dataset in DATASET_ORDER:
                 subset = frame.loc[frame["dataset"].astype(str) == dataset]
                 axis.scatter(
                     subset["age_true"],
                     subset["age_pred"],
-                    s=12,
+                    s=point_size,
                     c=DATASET_COLORS[dataset],
-                    alpha=0.25,
+                    alpha=point_alpha,
                     edgecolors="none",
                     rasterized=False,
                     zorder=2,
@@ -290,7 +297,7 @@ def render(conditions: list[dict], output_dir: Path, dpi: int) -> list[Path]:
     figure.text(0.5, 0.018, "Chronological age (years)", ha="center", va="bottom", fontsize=10.5)
     figure.text(0.025, 0.5, "Predicted age (years)", ha="left", va="center", rotation=90, fontsize=10.5)
     figure.suptitle(
-        "Internal test predictions: fine-tuned models",
+        "Internal test predictions: frozen embeddings with Ridge regression",
         x=0.105,
         y=0.982,
         ha="left",
@@ -303,8 +310,8 @@ def render(conditions: list[dict], output_dir: Path, dpi: int) -> list[Path]:
     figure.canvas.draw()
     output_dir.mkdir(parents=True, exist_ok=True)
     outputs = [
-        output_dir / "FigureS5_adapted_test_scatter.png",
-        output_dir / "FigureS5_adapted_test_scatter.svg",
+        output_dir / "FigureS3_frozen_ridge_test_scatter.png",
+        output_dir / "FigureS3_frozen_ridge_test_scatter.svg",
     ]
     for destination in outputs:
         temporary = destination.with_name(
@@ -324,15 +331,21 @@ def render(conditions: list[dict], output_dir: Path, dpi: int) -> list[Path]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--brain-age-root", default=DEFAULT_BRAIN_AGE_ROOT)
-    parser.add_argument("--adapted-audit", default=DEFAULT_ADAPTED_AUDIT)
+    parser.add_argument(
+        "--anatcl-internal-test-root", default=DEFAULT_ANATCL_FROZEN_INTERNAL_ROOT
+    )
+    parser.add_argument(
+        "--anatcl-onharmony-root", default=DEFAULT_ANATCL_FROZEN_ONHARMONY_ROOT
+    )
     parser.add_argument("--output-dir", default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--manifest", default=DEFAULT_MANIFEST)
     parser.add_argument("--dpi", type=int, default=400)
     args = parser.parse_args()
 
-    adapted_audit = Path(args.adapted_audit).expanduser().resolve()
-    conditions, sources, global_audit = load_conditions(
-        Path(args.brain_age_root).expanduser().resolve(), adapted_audit
+    conditions, sources = load_conditions(
+        Path(args.brain_age_root).expanduser().resolve(),
+        Path(args.anatcl_internal_test_root).expanduser().resolve(),
+        Path(args.anatcl_onharmony_root).expanduser().resolve(),
     )
     outputs = render(
         conditions, Path(args.output_dir).expanduser().resolve(), args.dpi
@@ -341,15 +354,12 @@ def main() -> None:
     atomic_json(
         manifest_path,
         {
-            "figure": "Supplementary Figure S5: adapted internal-test predictions",
+            "figure": "Supplementary Figure S3: frozen-Ridge internal-test predictions",
             "cohort": {"split": "internal_test", "subjects": 140},
             "display": (
                 "one point per locked subject-run prediction; metrics averaged across "
                 "runs; predictions not ensembled"
             ),
-            "global_adapted_audit": str(adapted_audit),
-            "global_adapted_audit_sha256": sha256_file(adapted_audit),
-            "global_audit_status": global_audit["status"],
             "script": str(SCRIPT_PATH),
             "accuracy_summaries": {c["condition"]: c["accuracy_summary"] for c in conditions},
             "script_sha256": sha256_file(SCRIPT_PATH),

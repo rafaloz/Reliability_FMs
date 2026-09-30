@@ -19,9 +19,9 @@ import numpy as np
 
 
 SCRIPT_PATH = Path(__file__).resolve()
-PROJECT_ROOT = SCRIPT_PATH.parents[4]
+PROJECT_ROOT = SCRIPT_PATH.parents[1]
 DEFAULT_RESULTS = PROJECT_ROOT / "Results" / "Figure2" / "figure2_reliability_results.json"
-DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "Paper" / "ImagingNeuroscience" / "Figures"
+DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "Figures"
 DEFAULT_MANIFEST = PROJECT_ROOT / "Results" / "Figure2" / "figure2_figure_manifest.json"
 
 DISPLAY_ORDER = (

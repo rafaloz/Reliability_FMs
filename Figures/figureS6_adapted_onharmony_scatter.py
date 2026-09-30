@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render ON-Harmony scatterplots for the seven frozen-Ridge models."""
+"""Render ON-Harmony scatterplots for the seven adapted models."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from pathlib import Path
 import sys
 import tempfile
 
-os.environ.setdefault("MPLCONFIGDIR", f"/tmp/matplotlib-supp-ridge-oh-{os.getuid()}")
+os.environ.setdefault("MPLCONFIGDIR", f"/tmp/matplotlib-supp-adapted-oh-{os.getuid()}")
 Path(os.environ["MPLCONFIGDIR"]).mkdir(parents=True, exist_ok=True)
 
 import matplotlib as mpl
@@ -21,7 +21,7 @@ import pandas as pd
 
 
 SCRIPT_PATH = Path(__file__).resolve()
-PROJECT_ROOT = SCRIPT_PATH.parents[4]
+PROJECT_ROOT = SCRIPT_PATH.parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -31,32 +31,32 @@ from Analyses.figure2_reliability import (  # noqa: E402
     select_primary_acquisition_per_cell,
 )
 from Analyses.figure3_brain_age import (  # noqa: E402
-    DEFAULT_ANATCL_FROZEN_INTERNAL_ROOT,
-    DEFAULT_ANATCL_FROZEN_ONHARMONY_ROOT,
-    DEFAULT_BRAIN_AGE_ROOT,
     DEFAULT_PARTICIPANTS,
     EXPECTED_ONHARMONY_ROWS,
     EXPECTED_ONHARMONY_SUBJECTS,
-    MODEL_SPECS,
     acquisition_table,
-    frozen_prediction_dirs,
-    load_onharmony_predictions,
     load_participants,
     pairwise_absolute_difference_by_subject,
     participant_scanner_cells,
-    validate_prediction_audit,
+)
+from Analyses.figure4_adaptation import (  # noqa: E402
+    DEFAULT_ADAPTED_AUDIT,
+    DEFAULT_BRAIN_AGE_ROOT,
+    MODEL_SPECS,
+    validate_adapted_onharmony,
+    validate_global_adapted_audit,
 )
 from FineTuning.shared.metrics import regression_metrics  # noqa: E402
 
 
-from Paper.ImagingNeuroscience.Figures.FiguresScripts.scatter_accuracy import accuracy_summary, accuracy_text
+from Figures.scatter_accuracy import accuracy_summary, accuracy_text
 
-DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "Paper" / "ImagingNeuroscience" / "Figures"
-DEFAULT_FIGURE3_RESULTS = (
-    PROJECT_ROOT / "Results" / "Figure3" / "figure3_brain_age_results.json"
+DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "Figures"
+DEFAULT_FIGURE4_RESULTS = (
+    PROJECT_ROOT / "Results" / "Figure4" / "figure4_adaptation_results.json"
 )
 DEFAULT_MANIFEST = (
-    PROJECT_ROOT / "Results" / "FigureS4" / "frozen_ridge_onharmony_manifest.json"
+    PROJECT_ROOT / "Results" / "FigureS6" / "adapted_onharmony_manifest.json"
 )
 
 SCANNER_ORDER = ("750", "Prem21", "Prem48", "Ach", "Ing", "Pri32", "Pri64", "Trio")
@@ -125,7 +125,7 @@ def configure_matplotlib() -> None:
             "axes.spines.top": False,
             "axes.spines.right": False,
             "svg.fonttype": "none",
-            "svg.hashsalt": "supp-frozen-ridge-onharmony-v1",
+            "svg.hashsalt": "supp-adapted-onharmony-v1",
             "savefig.facecolor": "white",
         }
     )
@@ -137,13 +137,13 @@ def load_locked_results(path: Path) -> dict:
     payload = json.loads(path.read_text(encoding="utf-8"))
     expected_conditions = {spec.condition for spec in MODEL_SPECS}
     if set(payload.get("conditions", {})) != expected_conditions:
-        raise ValueError("Figure 3 results do not contain the seven expected models")
+        raise ValueError("Figure 4 results do not contain the seven expected models")
     code = payload.get("code", {})
     analysis_script = Path(code.get("analysis_script", ""))
     if not analysis_script.is_file():
         raise FileNotFoundError(analysis_script)
     if sha256_file(analysis_script) != code.get("analysis_script_sha256"):
-        raise ValueError("Figure 3 analysis script has drifted")
+        raise ValueError("Figure 4 analysis script has drifted")
     return payload
 
 
@@ -167,97 +167,109 @@ def attach_age(frame: pd.DataFrame, participants: pd.DataFrame) -> pd.DataFrame:
     return result
 
 
-def point_metrics(frames: list[pd.DataFrame]) -> tuple[list[float], list[float]]:
+def point_metrics(frame: pd.DataFrame) -> tuple[float, float]:
     samples = bootstrap_indices(EXPECTED_ONHARMONY_SUBJECTS, 10, 1701)
-    dbicc = []
-    scanner_difference = []
-    for frame in frames:
-        cells = participant_scanner_cells(frame)
-        metric = compute_dbicc(cells, ["age_pred"], samples)
-        dbicc.append(float(metric["estimate"]))
-        scanner_difference.append(
-            float(pairwise_absolute_difference_by_subject(cells).mean())
-        )
-    return dbicc, scanner_difference
+    cells = participant_scanner_cells(frame)
+    dbicc = compute_dbicc(cells, ["age_pred"], samples)
+    scanner_difference = pairwise_absolute_difference_by_subject(cells)
+    return float(dbicc["estimate"]), float(scanner_difference.mean())
 
 
-def validate_metric_vector(
-    observed: list[float], locked: dict, *, label: str
-) -> None:
-    expected = locked.get("fold_estimates", [locked["estimate"]])
+def validate_vector(observed: list[float], locked: dict, *, label: str) -> None:
+    expected = np.asarray(locked["run_estimates"], dtype=float)
     if len(observed) != len(expected) or not np.allclose(
-        observed, np.asarray(expected, dtype=float), rtol=0.0, atol=1e-10
+        observed, expected, rtol=0.0, atol=1e-10
     ):
         raise ValueError(f"Recomputed/locked metric mismatch for {label}")
+    if not np.isclose(np.mean(observed), locked["estimate"], rtol=0.0, atol=1e-10):
+        raise ValueError(f"Recomputed/locked aggregate mismatch for {label}")
 
 
 def load_conditions(
     brain_age_root: Path,
-    anatcl_internal_root: Path,
-    anatcl_onharmony_root: Path,
+    adapted_audit_path: Path,
     participants_path: Path,
-    figure3_results_path: Path,
-) -> tuple[list[dict], list[dict], dict]:
-    locked = load_locked_results(figure3_results_path)
+    figure4_results_path: Path,
+) -> tuple[list[dict], list[dict], dict, dict]:
+    locked = load_locked_results(figure4_results_path)
+    global_audit, source_map = validate_global_adapted_audit(adapted_audit_path)
     participants = load_participants(participants_path)
-    participant_contract = locked["cohorts"]["onharmony"]
+    participant_contract = locked["inputs"]
     if sha256_file(participants_path) != participant_contract["participants_sha256"]:
-        raise ValueError("Participant table differs from the Figure 3 contract")
+        raise ValueError("Participant table differs from the Figure 4 contract")
 
     conditions = []
     sources = []
     reference_acquisitions = None
     for spec in MODEL_SPECS:
         frames = []
-        recorded_sources = locked["conditions"][spec.condition]["inputs"]["onharmony"]
-        if len(recorded_sources) != len(spec.variants):
-            raise ValueError(f"Wrong locked source count for {spec.label}")
-        for index, variant in enumerate(spec.variants):
-            _, onharmony_dir = frozen_prediction_dirs(
-                brain_age_root,
-                spec=spec,
-                variant=variant,
-                anatcl_internal_root=anatcl_internal_root,
-                anatcl_onharmony_root=anatcl_onharmony_root,
-            )
+        observed_dbicc = []
+        observed_difference = []
+        condition_results = locked["conditions"][spec.condition]
+        if condition_results["primary_runs"] != [run.run for run in spec.primary_runs]:
+            raise ValueError(f"Primary run definition drift for {spec.label}")
+
+        for run in spec.primary_runs:
+            target = f"{spec.model_dir}/{run.run}"
+            source = source_map[target]
+            onharmony_dir = brain_age_root / "onharmony" / "adapted" / spec.model_dir / run.run
             predictions_path = onharmony_dir / "predictions.tsv"
             audit_path = onharmony_dir / "prediction_audit.json"
-            provenance = validate_prediction_audit(
-                audit_path, predictions_path, spec=spec, variant=variant
+            frame, provenance = validate_adapted_onharmony(
+                audit_path,
+                predictions_path,
+                spec=spec,
+                run=run,
+                checkpoint_sha256=source["checkpoint_sha256"],
             )
-            recorded = recorded_sources[index]
-            for key in ("predictions_sha256", "audit_sha256"):
+            recorded = condition_results["run_results"][run.run]["inputs"][
+                "adapted_onharmony"
+            ]
+            for key in ("predictions_sha256", "audit_sha256", "checkpoint_sha256"):
                 if provenance[key] != recorded[key]:
-                    raise ValueError(f"Figure 3 source drift for {spec.label}/{variant}")
-            frame = load_onharmony_predictions(
-                predictions_path, spec=spec, variant=variant
-            )
+                    raise ValueError(f"Figure 4 source drift for {target}")
             identity = acquisition_table(frame)
             if reference_acquisitions is None:
                 reference_acquisitions = identity
             elif not identity.equals(reference_acquisitions):
-                raise ValueError(f"Acquisition mismatch for {spec.label}/{variant}")
+                raise ValueError(f"Acquisition mismatch for {target}")
+
+            dbicc, scanner_difference = point_metrics(frame)
+            run_metrics = condition_results["run_results"][run.run]["absolute"]["adapted"]
+            if not np.isclose(
+                dbicc, run_metrics["prediction_dbicc"], rtol=0.0, atol=1e-10
+            ):
+                raise ValueError(f"dbICC mismatch for {target}")
+            if not np.isclose(
+                scanner_difference,
+                run_metrics["scanner_difference_years"],
+                rtol=0.0,
+                atol=1e-10,
+            ):
+                raise ValueError(f"Scanner-difference mismatch for {target}")
             primary_frame = select_primary_acquisition_per_cell(frame)
             frames.append(attach_age(primary_frame, participants))
+            observed_dbicc.append(dbicc)
+            observed_difference.append(scanner_difference)
             sources.append(
                 {
                     "model": spec.label,
-                    "variant": variant,
+                    "run": run.run,
+                    "seed": run.seed,
+                    "fold": run.fold,
                     "predictions": str(predictions_path.resolve()),
                     "predictions_sha256": provenance["predictions_sha256"],
                     "audit": str(audit_path.resolve()),
                     "audit_sha256": provenance["audit_sha256"],
+                    "checkpoint_sha256": provenance["checkpoint_sha256"],
                 }
             )
 
-        dbicc, scanner_difference = point_metrics(frames)
-        condition_results = locked["conditions"][spec.condition]
-        validate_metric_vector(
-            dbicc, condition_results["prediction_dbicc"], label=f"{spec.label} dbICC"
-        )
-        validate_metric_vector(
-            scanner_difference,
-            condition_results["cross_scanner_absolute_difference"],
+        adapted_metrics = condition_results["absolute"]["adapted"]
+        validate_vector(observed_dbicc, adapted_metrics["dbicc"], label=f"{spec.label} dbICC")
+        validate_vector(
+            observed_difference,
+            adapted_metrics["scanner_difference"],
             label=f"{spec.label} scanner difference",
         )
         conditions.append(
@@ -269,16 +281,14 @@ def load_conditions(
                     regression_metrics(frame["age_true"], frame["age_pred"])
                     for frame in frames
                 ],
-                "dbicc": condition_results["prediction_dbicc"],
-                "scanner_difference": condition_results[
-                    "cross_scanner_absolute_difference"
-                ],
+                "dbicc": adapted_metrics["dbicc"],
+                "scanner_difference": adapted_metrics["scanner_difference"],
             }
         )
 
     if reference_acquisitions is None or len(reference_acquisitions) != EXPECTED_ONHARMONY_ROWS:
         raise RuntimeError("The complete ON-Harmony acquisition set was not loaded")
-    return conditions, sources, locked
+    return conditions, sources, locked, global_audit
 
 
 def metric_text(condition: dict) -> str:
@@ -301,10 +311,9 @@ def render(conditions: list[dict], output_dir: Path, dpi: int) -> list[Path]:
         axes.append(figure.add_subplot(grid[row, column], sharex=shared, sharey=shared))
 
     for index, (axis, condition) in enumerate(zip(axes, conditions)):
-        frames = condition["frames"]
-        point_alpha = 0.48 if len(frames) == 1 else 0.18
-        point_size = 14 if len(frames) == 1 else 10
-        for frame in frames:
+        point_alpha = 0.16 if len(condition["frames"]) == 3 else 0.12
+        point_size = 10 if len(condition["frames"]) == 3 else 8
+        for frame in condition["frames"]:
             for scanner in SCANNER_ORDER:
                 subset = frame.loc[frame["scanner"].astype(str) == scanner]
                 axis.scatter(
@@ -352,7 +361,7 @@ def render(conditions: list[dict], output_dir: Path, dpi: int) -> list[Path]:
     figure.text(0.5, 0.018, "Chronological age (years)", ha="center", va="bottom", fontsize=10.5)
     figure.text(0.025, 0.5, "Predicted age (years)", ha="left", va="center", rotation=90, fontsize=10.5)
     figure.suptitle(
-        "ON-Harmony predictions: frozen embeddings with Ridge regression",
+        "ON-Harmony predictions: fine-tuned models",
         x=0.105, y=0.982, ha="left", fontsize=12, fontweight="bold",
     )
 
@@ -361,8 +370,8 @@ def render(conditions: list[dict], output_dir: Path, dpi: int) -> list[Path]:
     figure.canvas.draw()
     output_dir.mkdir(parents=True, exist_ok=True)
     outputs = [
-        output_dir / "FigureS4_frozen_ridge_onharmony_scatter.png",
-        output_dir / "FigureS4_frozen_ridge_onharmony_scatter.svg",
+        output_dir / "FigureS6_adapted_onharmony_scatter.png",
+        output_dir / "FigureS6_adapted_onharmony_scatter.svg",
     ]
     for destination in outputs:
         temporary = destination.with_name(
@@ -380,25 +389,20 @@ def render(conditions: list[dict], output_dir: Path, dpi: int) -> list[Path]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--brain-age-root", default=DEFAULT_BRAIN_AGE_ROOT)
-    parser.add_argument(
-        "--anatcl-internal-test-root", default=DEFAULT_ANATCL_FROZEN_INTERNAL_ROOT
-    )
-    parser.add_argument(
-        "--anatcl-onharmony-root", default=DEFAULT_ANATCL_FROZEN_ONHARMONY_ROOT
-    )
+    parser.add_argument("--adapted-audit", default=DEFAULT_ADAPTED_AUDIT)
     parser.add_argument("--participants", default=DEFAULT_PARTICIPANTS)
-    parser.add_argument("--figure3-results", default=DEFAULT_FIGURE3_RESULTS)
+    parser.add_argument("--figure4-results", default=DEFAULT_FIGURE4_RESULTS)
     parser.add_argument("--output-dir", default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--manifest", default=DEFAULT_MANIFEST)
     parser.add_argument("--dpi", type=int, default=400)
     args = parser.parse_args()
 
     participants_path = Path(args.participants).expanduser().resolve()
-    results_path = Path(args.figure3_results).expanduser().resolve()
-    conditions, sources, locked = load_conditions(
+    results_path = Path(args.figure4_results).expanduser().resolve()
+    adapted_audit_path = Path(args.adapted_audit).expanduser().resolve()
+    conditions, sources, locked, global_audit = load_conditions(
         Path(args.brain_age_root).expanduser().resolve(),
-        Path(args.anatcl_internal_test_root).expanduser().resolve(),
-        Path(args.anatcl_onharmony_root).expanduser().resolve(),
+        adapted_audit_path,
         participants_path,
         results_path,
     )
@@ -407,7 +411,7 @@ def main() -> None:
     atomic_json(
         manifest_path,
         {
-            "figure": "Supplementary Figure S4: frozen-Ridge ON-Harmony predictions",
+            "figure": "Supplementary Figure S6: adapted ON-Harmony predictions",
             "cohort": {
                 "source_acquisitions": 165,
                 "primary_acquisitions": 120,
@@ -422,9 +426,12 @@ def main() -> None:
             ),
             "participants": str(participants_path),
             "participants_sha256": sha256_file(participants_path),
-            "figure3_results": str(results_path),
-            "figure3_results_sha256": sha256_file(results_path),
-            "figure3_analysis_script_sha256": locked["code"]["analysis_script_sha256"],
+            "figure4_results": str(results_path),
+            "figure4_results_sha256": sha256_file(results_path),
+            "figure4_analysis_script_sha256": locked["code"]["analysis_script_sha256"],
+            "global_adapted_audit": str(adapted_audit_path),
+            "global_adapted_audit_sha256": sha256_file(adapted_audit_path),
+            "global_audit_status": global_audit["status"],
             "script": str(SCRIPT_PATH),
             "accuracy_summaries": {c["condition"]: c["accuracy_summary"] for c in conditions},
             "script_sha256": sha256_file(SCRIPT_PATH),

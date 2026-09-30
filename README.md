@@ -10,14 +10,12 @@ A Travelling-Heads Study**.
   BrainSegFounder BF16 extractor used for precision alignment.
 - `FineTuning/`: seven model adapters, Ridge, fine-tuning, evaluation and guards.
 - `Analyses/`: current representation, prediction and adaptation analyses.
-- `Paper/ImagingNeuroscience/Figures/FiguresScripts/`: main and supplementary
+- `Figures/`: main and supplementary
   figure generators; analysis artifacts must be generated separately.
-- `Paper/ImagingNeuroscience/Tables/`: model descriptions and dbICC scaling
+- `Tables/`: model descriptions and dbICC scaling
   sensitivity. The manuscript's comparative results table is not generated here.
 - `Supplementary/`: AnatCL-SimCLR extractor and the BrainSegFounder selection
   migration helper.
-- `ExcelsChecks/`: source-only BrainIAC precision audit;
-  no participant spreadsheets or audit data are included.
 
 Models: y-Aware, AnatCL, 3D-Neuro-SimCLR, BrainIAC, BrainSegFounder, NeuroVFM,
 and Curia-2. Model READMEs describe training interfaces. Historical execution

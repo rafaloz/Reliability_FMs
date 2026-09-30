@@ -31,10 +31,10 @@ import pandas as pd
 
 
 SCRIPT_PATH = Path(__file__).resolve()
-PROJECT_ROOT = SCRIPT_PATH.parents[4]
+PROJECT_ROOT = SCRIPT_PATH.parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
-DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "Paper" / "ImagingNeuroscience" / "Figures"
+DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "Figures"
 DEFAULT_PROVENANCE = PROJECT_ROOT / "Results" / "FigureS1" / "model_inputs_manifest.json"
 DEFAULT_DATA_ROOTS = (
     PROJECT_ROOT,

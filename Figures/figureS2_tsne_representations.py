@@ -31,12 +31,12 @@ from sklearn.preprocessing import StandardScaler
 
 
 SCRIPT_PATH = Path(__file__).resolve()
-PROJECT_ROOT = SCRIPT_PATH.parents[4]
+PROJECT_ROOT = SCRIPT_PATH.parents[1]
 DEFAULT_INPUT_ROOT = PROJECT_ROOT / "Results" / "Figure2" / "inputs"
 DEFAULT_FIGURE2_RESULTS = (
     PROJECT_ROOT / "Results" / "Figure2" / "figure2_reliability_results.json"
 )
-DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "Paper" / "ImagingNeuroscience" / "Figures"
+DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "Figures"
 DEFAULT_MANIFEST = (
     PROJECT_ROOT / "Results" / "FigureS2" / "figureS2_tsne_manifest.json"
 )

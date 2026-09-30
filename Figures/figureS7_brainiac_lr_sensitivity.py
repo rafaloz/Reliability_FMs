@@ -20,11 +20,11 @@ import pandas as pd
 
 
 SCRIPT_PATH = Path(__file__).resolve()
-PROJECT_ROOT = SCRIPT_PATH.parents[4]
+PROJECT_ROOT = SCRIPT_PATH.parents[1]
 DEFAULT_INPUT_DIR = (
     PROJECT_ROOT / "Results" / "FigureS7" / "brainiac_lr_sensitivity_inputs"
 )
-DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "Paper" / "ImagingNeuroscience" / "Figures"
+DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "Figures"
 DEFAULT_MANIFEST = (
     PROJECT_ROOT / "Results" / "FigureS7" / "brainiac_lr_sensitivity_manifest.json"
 )
