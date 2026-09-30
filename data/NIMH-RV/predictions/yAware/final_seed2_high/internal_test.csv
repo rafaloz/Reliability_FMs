@@ -1,0 +1,15 @@
+participant_id,split,model,variant,arm,run,seed,fold,primary,age_pred
+sub-ON11111,internal_test,yAware,canonical,adapted,final_seed2_high,2,,True,55.64580735483315
+sub-ON25658,internal_test,yAware,canonical,adapted,final_seed2_high,2,,True,26.4306390381947
+sub-ON26854,internal_test,yAware,canonical,adapted,final_seed2_high,2,,True,25.38436579269525
+sub-ON33159,internal_test,yAware,canonical,adapted,final_seed2_high,2,,True,30.77669713488472
+sub-ON50636,internal_test,yAware,canonical,adapted,final_seed2_high,2,,True,32.788761068537504
+sub-ON52083,internal_test,yAware,canonical,adapted,final_seed2_high,2,,True,23.855197203119133
+sub-ON67435,internal_test,yAware,canonical,adapted,final_seed2_high,2,,True,58.14076663256261
+sub-ON70467,internal_test,yAware,canonical,adapted,final_seed2_high,2,,True,27.879325070424706
+sub-ON80038,internal_test,yAware,canonical,adapted,final_seed2_high,2,,True,38.34205752541919
+sub-ON85616,internal_test,yAware,canonical,adapted,final_seed2_high,2,,True,32.22538316711472
+sub-ON86202,internal_test,yAware,canonical,adapted,final_seed2_high,2,,True,26.35015648084859
+sub-ON87538,internal_test,yAware,canonical,adapted,final_seed2_high,2,,True,22.808923957619683
+sub-ON94856,internal_test,yAware,canonical,adapted,final_seed2_high,2,,True,41.541239179927125
+sub-ON97504,internal_test,yAware,canonical,adapted,final_seed2_high,2,,True,22.48699372823524

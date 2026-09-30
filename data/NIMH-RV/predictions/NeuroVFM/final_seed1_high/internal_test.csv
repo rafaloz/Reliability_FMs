@@ -1,0 +1,15 @@
+participant_id,split,model,variant,arm,run,seed,fold,primary,age_pred
+sub-ON11111,internal_test,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,50.93757775008564
+sub-ON25658,internal_test,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,31.74248782303805
+sub-ON26854,internal_test,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,25.545330907387477
+sub-ON33159,internal_test,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,33.27165641261417
+sub-ON50636,internal_test,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,42.79374897862599
+sub-ON52083,internal_test,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,26.51112159554081
+sub-ON67435,internal_test,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,51.0583015861048
+sub-ON70467,internal_test,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,26.51112159554081
+sub-ON80038,internal_test,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,44.00224487877619
+sub-ON85616,internal_test,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,39.20724501688989
+sub-ON86202,internal_test,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,29.971871561423605
+sub-ON87538,internal_test,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,32.54731339649917
+sub-ON94856,internal_test,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,39.7907435576492
+sub-ON97504,internal_test,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,33.99599942872918

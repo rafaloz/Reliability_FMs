@@ -1,0 +1,16 @@
+participant_id,split,model,variant,arm,run,seed,fold,primary,age_pred
+sub-003617,internal_test,NeuroVFM,canonical,frozen,ridge_canonical,,,True,50.68805288187912
+sub-261051,internal_test,NeuroVFM,canonical,frozen,ridge_canonical,,,True,22.70713163240916
+sub-275211,internal_test,NeuroVFM,canonical,frozen,ridge_canonical,,,True,41.43199482509667
+sub-468609,internal_test,NeuroVFM,canonical,frozen,ridge_canonical,,,True,26.593289013640952
+sub-561646,internal_test,NeuroVFM,canonical,frozen,ridge_canonical,,,True,27.664105352754557
+sub-567742,internal_test,NeuroVFM,canonical,frozen,ridge_canonical,,,True,19.716015652586517
+sub-570379,internal_test,NeuroVFM,canonical,frozen,ridge_canonical,,,True,18.766662399705886
+sub-645865,internal_test,NeuroVFM,canonical,frozen,ridge_canonical,,,True,15.644850160927176
+sub-669067,internal_test,NeuroVFM,canonical,frozen,ridge_canonical,,,True,39.59824834868446
+sub-678878,internal_test,NeuroVFM,canonical,frozen,ridge_canonical,,,True,17.81108027116125
+sub-697441,internal_test,NeuroVFM,canonical,frozen,ridge_canonical,,,True,22.906818674515023
+sub-750675,internal_test,NeuroVFM,canonical,frozen,ridge_canonical,,,True,25.380292153448178
+sub-764976,internal_test,NeuroVFM,canonical,frozen,ridge_canonical,,,True,32.151237402369695
+sub-778481,internal_test,NeuroVFM,canonical,frozen,ridge_canonical,,,True,26.152155916672555
+sub-992121,internal_test,NeuroVFM,canonical,frozen,ridge_canonical,,,True,29.85888884827616

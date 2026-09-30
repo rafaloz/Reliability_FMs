@@ -1,0 +1,16 @@
+participant_id,split,model,variant,arm,run,seed,fold,primary,age_pred
+sub-000149,validation,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,36.57144126380474
+sub-000159,validation,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,17.336110058084106
+sub-012322,validation,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,29.73042388938527
+sub-067018,validation,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,16.37031936993077
+sub-127867,validation,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,60.79669102498429
+sub-149050,validation,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,21.36023792538968
+sub-196711,validation,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,31.259592478961387
+sub-228373,validation,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,26.91353438227137
+sub-275147,validation,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,17.658040287468552
+sub-441269,validation,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,27.55739484104026
+sub-535925,validation,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,32.386348281806946
+sub-687508,validation,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,38.9255560661785
+sub-791907,validation,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,34.23744710076751
+sub-890465,validation,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,24.66002277658025
+sub-987325,validation,NeuroVFM,canonical,adapted,final_seed1_high,1,,True,28.12077274246304

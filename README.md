@@ -5,6 +5,8 @@ A Travelling-Heads Study**.
 
 ## Layout
 
+- `data/`: derived CSVs organised by dataset; sources and attribution are in
+  `data/sources.csv`. Each dataset includes an inventory and data dictionary.
 - `preprocessings/`: model-specific preprocessing and visual QC.
 - `Emb_extractors/`: ON-Harmony frozen extraction, including the separate
   BrainSegFounder BF16 extractor used for precision alignment.
@@ -60,8 +62,8 @@ CamCAN requires approved access and its own data-use agreement.
 
 ## License
 
-The source code is licensed under Apache-2.0. This license does not apply to
-`data/camcan_derivatives/`; consult the
-[CamCAN data-use terms](https://opendata.mrc-cbu.cam.ac.uk/projects/camcan/).
+The source code is licensed under Apache-2.0. Dataset-specific terms and
+attribution for `data/` are listed in `data/sources.csv`; CamCAN retains its
+[data-use terms](https://opendata.mrc-cbu.cam.ac.uk/projects/camcan/).
 External implementations, weights, software and datasets retain their own
 licenses and access terms.

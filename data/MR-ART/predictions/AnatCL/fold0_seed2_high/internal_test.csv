@@ -1,0 +1,16 @@
+participant_id,split,model,variant,arm,run,seed,fold,primary,age_pred
+sub-003617,internal_test,AnatCL,fold0,adapted,fold0_seed2_high,2,0,False,49.16696148847118
+sub-261051,internal_test,AnatCL,fold0,adapted,fold0_seed2_high,2,0,False,21.19927281069745
+sub-275211,internal_test,AnatCL,fold0,adapted,fold0_seed2_high,2,0,False,29.48897621734693
+sub-468609,internal_test,AnatCL,fold0,adapted,fold0_seed2_high,2,0,False,21.36023792538968
+sub-561646,internal_test,AnatCL,fold0,adapted,fold0_seed2_high,2,0,False,27.315947169001927
+sub-567742,internal_test,AnatCL,fold0,adapted,fold0_seed2_high,2,0,False,24.499057661888024
+sub-570379,internal_test,AnatCL,fold0,adapted,fold0_seed2_high,2,0,False,19.75058677846745
+sub-645865,internal_test,AnatCL,fold0,adapted,fold0_seed2_high,2,0,False,20.072517007851896
+sub-669067,internal_test,AnatCL,fold0,adapted,fold0_seed2_high,2,0,False,30.696214577538605
+sub-678878,internal_test,AnatCL,fold0,adapted,fold0_seed2_high,2,0,False,19.589621663775223
+sub-697441,internal_test,AnatCL,fold0,adapted,fold0_seed2_high,2,0,False,22.00409838415857
+sub-750675,internal_test,AnatCL,fold0,adapted,fold0_seed2_high,2,0,False,26.35015648084859
+sub-764976,internal_test,AnatCL,fold0,adapted,fold0_seed2_high,2,0,False,22.00409838415857
+sub-778481,internal_test,AnatCL,fold0,adapted,fold0_seed2_high,2,0,False,20.072517007851896
+sub-992121,internal_test,AnatCL,fold0,adapted,fold0_seed2_high,2,0,False,28.362220414501373

@@ -1,0 +1,15 @@
+participant_id,split,model,variant,arm,run,seed,fold,primary,age_pred
+sub-ON11111,internal_test,Curia2,canonical,adapted,selection_seed0_high,0,,True,57.255458501755385
+sub-ON25658,internal_test,Curia2,canonical,adapted,selection_seed0_high,0,,True,28.20125529980915
+sub-ON26854,internal_test,Curia2,canonical,adapted,selection_seed0_high,0,,True,37.77867962399641
+sub-ON33159,internal_test,Curia2,canonical,adapted,selection_seed0_high,0,,True,36.77264765717002
+sub-ON50636,internal_test,Curia2,canonical,adapted,selection_seed0_high,0,,True,35.525168018305294
+sub-ON52083,internal_test,Curia2,canonical,adapted,selection_seed0_high,0,,True,22.969889072311908
+sub-ON67435,internal_test,Curia2,canonical,adapted,selection_seed0_high,0,,True,59.83090033683095
+sub-ON70467,internal_test,Curia2,canonical,adapted,selection_seed0_high,0,,True,25.94774369411803
+sub-ON80038,internal_test,Curia2,canonical,adapted,selection_seed0_high,0,,True,29.569458774693047
+sub-ON85616,internal_test,Curia2,canonical,adapted,selection_seed0_high,0,,True,36.611682542477794
+sub-ON86202,internal_test,Curia2,canonical,adapted,selection_seed0_high,0,,True,25.545330907387477
+sub-ON87538,internal_test,Curia2,canonical,adapted,selection_seed0_high,0,,True,31.01814480692305
+sub-ON94856,internal_test,Curia2,canonical,adapted,selection_seed0_high,0,,True,48.44261847235618
+sub-ON97504,internal_test,Curia2,canonical,adapted,selection_seed0_high,0,,True,35.32396162494001

@@ -1,0 +1,16 @@
+participant_id,split,model,variant,arm,run,seed,fold,primary,age_pred
+sub-000149,validation,AnatCL,fold2,adapted,fold2_seed0_high,0,2,True,39.32796885290906
+sub-000159,validation,AnatCL,fold2,adapted,fold2_seed0_high,0,2,True,24.579540219234136
+sub-012322,validation,AnatCL,fold2,adapted,fold2_seed0_high,0,2,True,27.476912283694148
+sub-067018,validation,AnatCL,fold2,adapted,fold2_seed0_high,0,2,True,21.36023792538968
+sub-127867,validation,AnatCL,fold2,adapted,fold2_seed0_high,0,2,True,64.01599331882875
+sub-149050,validation,AnatCL,fold2,adapted,fold2_seed0_high,0,2,True,20.716377466620788
+sub-196711,validation,AnatCL,fold2,adapted,fold2_seed0_high,0,2,True,26.752569267579144
+sub-228373,validation,AnatCL,fold2,adapted,fold2_seed0_high,0,2,True,23.533266973734687
+sub-275147,validation,AnatCL,fold2,adapted,fold2_seed0_high,0,2,True,21.36023792538968
+sub-441269,validation,AnatCL,fold2,adapted,fold2_seed0_high,0,2,True,25.706296022079695
+sub-535925,validation,AnatCL,fold2,adapted,fold2_seed0_high,0,2,True,29.16704598796249
+sub-687508,validation,AnatCL,fold2,adapted,fold2_seed0_high,0,2,True,32.22538316711472
+sub-791907,validation,AnatCL,fold2,adapted,fold2_seed0_high,0,2,True,35.565409296978345
+sub-890465,validation,AnatCL,fold2,adapted,fold2_seed0_high,0,2,True,24.09664487515747
+sub-987325,validation,AnatCL,fold2,adapted,fold2_seed0_high,0,2,True,24.901470448618586

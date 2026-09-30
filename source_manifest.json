@@ -1,5 +1,5 @@
 {
-  "scope": "source code manifest; derivative CSVs have a separate data/camcan_derivatives/inventory.csv",
+  "scope": "source code manifest; derivative CSVs have separate data/<dataset>/inventory.csv files",
   "files": [
     {
       "path": "Analyses/figure2_reliability.py",
@@ -431,7 +431,11 @@
     },
     {
       "path": "tools/prepare_camcan_derivatives.py",
-      "sha256": "0f4f8cf45833710b085c444ff4d2c4d82167ece49dd77684e447f93bdf7f7cb1"
+      "sha256": "c5c3b7ce8bab18e51834c321c5cfd63ea55d33bc1e8411dc0f90465ff5f7b643"
+    },
+    {
+      "path": "tools/prepare_onharmony_derivatives.py",
+      "sha256": "62c5afaea388959b189e5dca7bf175ab14ea6e30c4a0cb0a487dd44b9a6a54c8"
     }
   ]
 }

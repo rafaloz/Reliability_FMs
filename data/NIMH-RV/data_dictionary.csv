@@ -1,0 +1,19 @@
+column,description
+participant_id,Original NIMH-RV study identifier; not a newly anonymised identifier.
+split,"Original development split: train, validation or internal_test."
+model,Foundation-model identifier.
+variant,Encoder variant or AnatCL pretrained fold.
+arm,"embedding, frozen Ridge prediction, or adapted prediction."
+run,Representation or retained training-run identifier.
+seed,Training seed; blank for frozen embeddings and Ridge.
+fold,AnatCL pretrained fold 0-4; otherwise blank.
+primary,False marks AnatCL fold0 seeds1-2 sensitivity runs; no predictions are ensembled.
+emb_*,Frozen encoder feature values; axes are not interchangeable across models or folds.
+age_pred,"Predicted age in years, inverse-transformed with training statistics; not clipped."
+file,Relative path within this deposit.
+rows,Number of cohort rows in the CSV.
+readout,Embedding readout recorded by source audit; blank when not exported.
+amp,Source embedding forward precision; off means FP32; blank means not exported.
+source_sha256,"Digest of complete source TSV, not redistributed here."
+audit_sha256,Digest of source audit when checked; validation predictions have no audit digest here.
+csv_sha256,Digest of exported CSV.

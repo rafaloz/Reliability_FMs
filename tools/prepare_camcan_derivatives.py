@@ -1,4 +1,4 @@
-"""Prepare a local CSV-only CamCAN derivative deposit; never upload data."""
+"""Prepare a CSV-only derivative deposit for one development cohort; never upload."""
 
 import argparse
 import hashlib
@@ -17,6 +17,13 @@ from Analyses.figure3_brain_age import MODEL_SPECS as FROZEN_MODELS
 from Analyses.figure4_adaptation import MODEL_SPECS as ADAPTED_MODELS
 
 COUNTS = {"train": 521, "validation": 65, "internal_test": 64}
+COHORT_COUNTS = {
+    "CamCAN": COUNTS,
+    "MR-ART": {"train": 118, "validation": 15, "internal_test": 15},
+    "NIMH-RV": {"train": 118, "validation": 14, "internal_test": 14},
+    "NeuroCog": {"train": 239, "validation": 30, "internal_test": 30},
+    "WAND": {"train": 134, "validation": 17, "internal_test": 17},
+}
 
 
 def sha(path):
@@ -27,7 +34,7 @@ def sha(path):
     return digest.hexdigest()
 
 
-def select_frame(path, expected, split, *, embeddings=False):
+def select_frame(path, expected, split, *, embeddings=False, dataset="CamCAN"):
     before = sha(path)
     columns = pd.read_csv(path, sep="\t", nrows=0).columns.tolist()
     features = [c for c in columns if c.startswith("emb_")] if embeddings else ["age_pred"]
@@ -36,9 +43,9 @@ def select_frame(path, expected, split, *, embeddings=False):
     frame = pd.read_csv(path, sep="\t", usecols=["dataset", "subject", "split"] + features)
     if not frame["split"].eq(split).all():
         raise ValueError(f"Wrong split: {path}")
-    frame = frame.loc[frame.dataset.eq("CamCAN"), ["subject", "split"] + features]
+    frame = frame.loc[frame.dataset.eq(dataset), ["subject", "split"] + features]
     if frame.subject.duplicated().any() or set(frame.subject) != expected:
-        raise ValueError(f"CamCAN subject mismatch: {path}")
+        raise ValueError(f"{dataset} subject mismatch: {path}")
     if not np.isfinite(frame[features].to_numpy(dtype=float)).all():
         raise ValueError(f"Nonfinite derivatives: {path}")
     if sha(path) != before:
@@ -50,16 +57,18 @@ def export(args):
     if args.output.exists():
         raise FileExistsError(args.output)
     manifest = pd.read_csv(args.manifest, sep="\t", usecols=["dataset", "subject", "split"])
-    camcan = manifest.loc[manifest.dataset.eq("CamCAN")]
-    expected = {split: set(camcan.loc[camcan.split.eq(split), "subject"]) for split in COUNTS}
-    if camcan.subject.duplicated().any() or len(camcan) != 650 or any(len(expected[s]) != n for s, n in COUNTS.items()):
-        raise ValueError("Expected 650 unique CamCAN participants: 521/65/64")
+    dataset = getattr(args, "dataset", "CamCAN")
+    counts = COHORT_COUNTS[dataset]
+    cohort = manifest.loc[manifest.dataset.eq(dataset)]
+    expected = {split: set(cohort.loc[cohort.split.eq(split), "subject"]) for split in counts}
+    if cohort.subject.duplicated().any() or len(cohort) != sum(counts.values()) or any(len(expected[s]) != n for s, n in counts.items()):
+        raise ValueError(f"Unexpected {dataset} participant counts: expected {counts}")
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    temporary = Path(tempfile.mkdtemp(prefix=".camcan_deposit_", dir=args.output.parent))
+    temporary = Path(tempfile.mkdtemp(prefix=".derivative_deposit_", dir=args.output.parent))
     inventory = []
 
     def save(path, split, model, variant, arm, run, seed="", fold="", primary=True, audit=None):
-        frame, source_sha = select_frame(path, expected[split], split, embeddings=arm == "embedding")
+        frame, source_sha = select_frame(path, expected[split], split, embeddings=arm == "embedding", dataset=dataset)
         audit_sha = ""
         readout, amp = "", ""
         if audit is not None:
@@ -107,7 +116,7 @@ def export(args):
                 fold = variant.removeprefix("fold") if model == "AnatCL" else ""
                 suffix = "_bfloat16_v3" if model == "AnatCL" else ""
                 embedding_path = "BrainSegFounder/canonical" if model == "BrainSegFounder" else variant_path
-                for split in COUNTS:
+                for split in counts:
                     path = args.brain_age_root / f"embeddings_FT{suffix}" / embedding_path / f"{split}.tsv"
                     save(path, split, model, variant, "embedding", variant, fold=fold,
                          audit=Path(str(path) + ".audit.json"))
@@ -128,7 +137,7 @@ def export(args):
                          audit=fit / "INTERNAL_TEST_EVALUATED.json" if split == "internal_test" else None)
         pd.DataFrame(inventory).to_csv(temporary / "inventory.csv", index=False)
         definitions = {
-            "participant_id": "Original CamCAN study identifier; not a newly anonymised identifier.",
+            "participant_id": f"Original {dataset} study identifier; not a newly anonymised identifier.",
             "split": "Original development split: train, validation or internal_test.",
             "model": "Foundation-model identifier.", "variant": "Encoder variant or AnatCL pretrained fold.",
             "arm": "embedding, frozen Ridge prediction, or adapted prediction.",
@@ -138,7 +147,7 @@ def export(args):
             "primary": "False marks AnatCL fold0 seeds1-2 sensitivity runs; no predictions are ensembled.",
             "emb_*": "Frozen encoder feature values; axes are not interchangeable across models or folds.",
             "age_pred": "Predicted age in years, inverse-transformed with training statistics; not clipped.",
-            "file": "Relative path within this deposit.", "rows": "Number of CamCAN rows in the CSV.",
+            "file": "Relative path within this deposit.", "rows": "Number of cohort rows in the CSV.",
             "readout": "Embedding readout recorded by source audit; blank when not exported.",
             "amp": "Source embedding forward precision; off means FP32; blank means not exported.",
             "source_sha256": "Digest of complete source TSV, not redistributed here.",
@@ -147,15 +156,14 @@ def export(args):
         }
         pd.DataFrame(definitions.items(), columns=["column", "description"]).to_csv(temporary / "data_dictionary.csv", index=False)
         notes = {
-            "status": "Local draft; not uploaded or certified as satisfying the CamCAN agreement.",
-            "scope": "CamCAN derivatives only; seven models, eleven frozen representations and 25 retained adapted runs.",
-            "subjects": "650 unique participants: train521, validation65, internal_test64.",
+            "status": "CSV derivative deposit for the accompanying study.",
+            "scope": f"{dataset} derivatives; seven models, eleven frozen representations and 25 retained adapted runs.",
+            "subjects": f"{sum(counts.values())} unique participants: {counts}.",
             "excluded": "No raw MRI, true ages, sex, error/BAG columns, source demographics or filesystem paths.",
             "limitations": "Not a complete reproduction dataset; excludes other cohorts, processed images and model weights.",
             "source_validation": "Embeddings checked against sidecars; test predictions against receipts; validation predictions checked for identity, split and finiteness, with source digests recorded.",
-            "identifier_policy": "Original IDs retained for linkage; publication scope and identifiers to be confirmed with CamCAN.",
+            "identifier_policy": "Original study IDs retained for linkage; these are not newly anonymised identifiers.",
             "manifest_sha256": sha(args.manifest), "export_script_sha256": sha(Path(__file__)),
-            "camcan_terms": "https://opendata.mrc-cbu.cam.ac.uk/projects/camcan/",
         }
         pd.DataFrame(notes.items(), columns=["item", "description"]).to_csv(temporary / "deposit_notes.csv", index=False)
         if len(inventory) != 105:
@@ -172,4 +180,5 @@ if __name__ == "__main__":
     parser.add_argument("--brain-age-root", type=Path, required=True)
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--dataset", choices=COHORT_COUNTS, default="CamCAN")
     export(parser.parse_args())

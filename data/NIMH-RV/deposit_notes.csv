@@ -1,0 +1,10 @@
+item,description
+status,CSV derivative deposit for the accompanying study.
+scope,"NIMH-RV derivatives; seven models, eleven frozen representations and 25 retained adapted runs."
+subjects,"146 unique participants: {'train': 118, 'validation': 14, 'internal_test': 14}."
+excluded,"No raw MRI, true ages, sex, error/BAG columns, source demographics or filesystem paths."
+limitations,"Not a complete reproduction dataset; excludes other cohorts, processed images and model weights."
+source_validation,"Embeddings checked against sidecars; test predictions against receipts; validation predictions checked for identity, split and finiteness, with source digests recorded."
+identifier_policy,Original study IDs retained for linkage; these are not newly anonymised identifiers.
+manifest_sha256,b2ee2dc7e06349ef1ac550da2061274ee724d2b121ddd652b37c1907ae8bc212
+export_script_sha256,c5c3b7ce8bab18e51834c321c5cfd63ea55d33bc1e8411dc0f90465ff5f7b643

@@ -1,0 +1,16 @@
+participant_id,split,model,variant,arm,run,seed,fold,primary,age_pred
+sub-000149,validation,3DNeuroSimCLR,canonical,adapted,final_seed2_intermediate,2,,True,43.8293331344779
+sub-000159,validation,3DNeuroSimCLR,canonical,adapted,final_seed2_intermediate,2,,True,21.843133269466342
+sub-012322,validation,3DNeuroSimCLR,canonical,adapted,final_seed2_intermediate,2,,True,30.293801790808047
+sub-067018,validation,3DNeuroSimCLR,canonical,adapted,final_seed2_intermediate,2,,True,22.326028613543016
+sub-127867,validation,3DNeuroSimCLR,canonical,adapted,final_seed2_intermediate,2,,True,64.17695843352097
+sub-149050,validation,3DNeuroSimCLR,canonical,adapted,final_seed2_intermediate,2,,True,18.94576120500633
+sub-196711,validation,3DNeuroSimCLR,canonical,adapted,final_seed2_intermediate,2,,True,39.287727574236
+sub-228373,validation,3DNeuroSimCLR,canonical,adapted,final_seed2_intermediate,2,,True,25.545330907387477
+sub-275147,validation,3DNeuroSimCLR,canonical,adapted,final_seed2_intermediate,2,,True,12.50715661731742
+sub-441269,validation,3DNeuroSimCLR,canonical,adapted,final_seed2_intermediate,2,,True,39.529175246274335
+sub-535925,validation,3DNeuroSimCLR,canonical,adapted,final_seed2_intermediate,2,,True,29.2475285453086
+sub-687508,validation,3DNeuroSimCLR,canonical,adapted,final_seed2_intermediate,2,,True,36.81288893584308
+sub-791907,validation,3DNeuroSimCLR,canonical,adapted,final_seed2_intermediate,2,,True,29.971871561423605
+sub-890465,validation,3DNeuroSimCLR,canonical,adapted,final_seed2_intermediate,2,,True,15.887424025854102
+sub-987325,validation,3DNeuroSimCLR,canonical,adapted,final_seed2_intermediate,2,,True,23.291819301696357

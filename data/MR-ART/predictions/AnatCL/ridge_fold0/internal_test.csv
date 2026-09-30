@@ -1,0 +1,16 @@
+participant_id,split,model,variant,arm,run,seed,fold,primary,age_pred
+sub-003617,internal_test,AnatCL,fold0,frozen,ridge_fold0,,0,True,49.55133500627682
+sub-261051,internal_test,AnatCL,fold0,frozen,ridge_fold0,,0,True,27.390367774470374
+sub-275211,internal_test,AnatCL,fold0,frozen,ridge_fold0,,0,True,32.163847237463266
+sub-468609,internal_test,AnatCL,fold0,frozen,ridge_fold0,,0,True,21.163521517294797
+sub-561646,internal_test,AnatCL,fold0,frozen,ridge_fold0,,0,True,30.959162124314197
+sub-567742,internal_test,AnatCL,fold0,frozen,ridge_fold0,,0,True,25.48473615354225
+sub-570379,internal_test,AnatCL,fold0,frozen,ridge_fold0,,0,True,15.001928520617676
+sub-645865,internal_test,AnatCL,fold0,frozen,ridge_fold0,,0,True,18.78227024112909
+sub-669067,internal_test,AnatCL,fold0,frozen,ridge_fold0,,0,True,31.777628240758112
+sub-678878,internal_test,AnatCL,fold0,frozen,ridge_fold0,,0,True,25.27525059555778
+sub-697441,internal_test,AnatCL,fold0,frozen,ridge_fold0,,0,True,17.980356244568103
+sub-750675,internal_test,AnatCL,fold0,frozen,ridge_fold0,,0,True,28.72502384146512
+sub-764976,internal_test,AnatCL,fold0,frozen,ridge_fold0,,0,True,23.56669536804516
+sub-778481,internal_test,AnatCL,fold0,frozen,ridge_fold0,,0,True,23.09912572567413
+sub-992121,internal_test,AnatCL,fold0,frozen,ridge_fold0,,0,True,36.969606155206144

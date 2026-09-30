@@ -1,0 +1,15 @@
+participant_id,split,model,variant,arm,run,seed,fold,primary,age_pred
+sub-ON11111,internal_test,BrainSegFounder,bottleneck_mean,adapted,final_seed2_high,2,,True,45.83699567827582
+sub-ON25658,internal_test,BrainSegFounder,bottleneck_mean,adapted,final_seed2_high,2,,True,21.19927281069745
+sub-ON26854,internal_test,BrainSegFounder,bottleneck_mean,adapted,final_seed2_high,2,,True,19.911551893159672
+sub-ON33159,internal_test,BrainSegFounder,bottleneck_mean,adapted,final_seed2_high,2,,True,39.06640054153419
+sub-ON50636,internal_test,BrainSegFounder,bottleneck_mean,adapted,final_seed2_high,2,,True,39.06640054153419
+sub-ON52083,internal_test,BrainSegFounder,bottleneck_mean,adapted,final_seed2_high,2,,True,17.819005402160776
+sub-ON67435,internal_test,BrainSegFounder,bottleneck_mean,adapted,final_seed2_high,2,,True,48.28165335766396
+sub-ON70467,internal_test,BrainSegFounder,bottleneck_mean,adapted,final_seed2_high,2,,True,22.16506349885079
+sub-ON80038,internal_test,BrainSegFounder,bottleneck_mean,adapted,final_seed2_high,2,,True,31.662005265691946
+sub-ON85616,internal_test,BrainSegFounder,bottleneck_mean,adapted,final_seed2_high,2,,True,32.386348281806946
+sub-ON86202,internal_test,BrainSegFounder,bottleneck_mean,adapted,final_seed2_high,2,,True,24.09664487515747
+sub-ON87538,internal_test,BrainSegFounder,bottleneck_mean,adapted,final_seed2_high,2,,True,22.16506349885079
+sub-ON94856,internal_test,BrainSegFounder,bottleneck_mean,adapted,final_seed2_high,2,,True,46.21928782566985
+sub-ON97504,internal_test,BrainSegFounder,bottleneck_mean,adapted,final_seed2_high,2,,True,8.483028750011847

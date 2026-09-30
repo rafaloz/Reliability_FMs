@@ -22,7 +22,13 @@ Snapshots/
 *.ckpt
 *.safetensors
 *.csv
-!/data/camcan_derivatives/**/*.csv
+!/data/CamCAN/**/*.csv
+!/data/NeuroCog/**/*.csv
+!/data/WAND/**/*.csv
+!/data/NIMH-RV/**/*.csv
+!/data/MR-ART/**/*.csv
+!/data/ON-Harmony/**/*.csv
+!/data/sources.csv
 *.tsv
 *.xlsx
 *.xls

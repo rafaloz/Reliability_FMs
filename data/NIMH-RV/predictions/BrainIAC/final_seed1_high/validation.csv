@@ -1,0 +1,15 @@
+participant_id,split,model,variant,arm,run,seed,fold,primary,age_pred
+sub-ON08792,validation,BrainIAC,canonical,adapted,final_seed1_high,1,,True,33.432621527306395
+sub-ON23776,validation,BrainIAC,canonical,adapted,final_seed1_high,1,,True,46.95369116145312
+sub-ON26105,validation,BrainIAC,canonical,adapted,final_seed1_high,1,,True,28.12077274246304
+sub-ON31551,validation,BrainIAC,canonical,adapted,final_seed1_high,1,,True,33.59358664199862
+sub-ON33827,validation,BrainIAC,canonical,adapted,final_seed1_high,1,,True,28.20125529980915
+sub-ON40397,validation,BrainIAC,canonical,adapted,final_seed1_high,1,,True,32.386348281806946
+sub-ON54268,validation,BrainIAC,canonical,adapted,final_seed1_high,1,,True,64.82081889228985
+sub-ON55820,validation,BrainIAC,canonical,adapted,final_seed1_high,1,,True,18.62383097562189
+sub-ON61373,validation,BrainIAC,canonical,adapted,final_seed1_high,1,,True,33.35213896996028
+sub-ON78603,validation,BrainIAC,canonical,adapted,final_seed1_high,1,,True,31.259592478961387
+sub-ON82386,validation,BrainIAC,canonical,adapted,final_seed1_high,1,,True,36.12878719840113
+sub-ON85305,validation,BrainIAC,canonical,adapted,final_seed1_high,1,,True,43.7016928286868
+sub-ON87092,validation,BrainIAC,canonical,adapted,final_seed1_high,1,,True,38.74447031214975
+sub-ON89045,validation,BrainIAC,canonical,adapted,final_seed1_high,1,,True,37.577473230631135

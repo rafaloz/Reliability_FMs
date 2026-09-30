@@ -1,0 +1,16 @@
+participant_id,split,model,variant,arm,run,seed,fold,primary,age_pred
+sub-003617,internal_test,BrainIAC,canonical,frozen,ridge_canonical,,,True,46.20199459388165
+sub-261051,internal_test,BrainIAC,canonical,frozen,ridge_canonical,,,True,23.943053571971085
+sub-275211,internal_test,BrainIAC,canonical,frozen,ridge_canonical,,,True,12.269659983157029
+sub-468609,internal_test,BrainIAC,canonical,frozen,ridge_canonical,,,True,29.71361514523509
+sub-561646,internal_test,BrainIAC,canonical,frozen,ridge_canonical,,,True,27.506844195502868
+sub-567742,internal_test,BrainIAC,canonical,frozen,ridge_canonical,,,True,23.844885672610904
+sub-570379,internal_test,BrainIAC,canonical,frozen,ridge_canonical,,,True,16.181619192246668
+sub-645865,internal_test,BrainIAC,canonical,frozen,ridge_canonical,,,True,23.792782680895623
+sub-669067,internal_test,BrainIAC,canonical,frozen,ridge_canonical,,,True,33.31387738795854
+sub-678878,internal_test,BrainIAC,canonical,frozen,ridge_canonical,,,True,31.00974455767192
+sub-697441,internal_test,BrainIAC,canonical,frozen,ridge_canonical,,,True,24.981540685104587
+sub-750675,internal_test,BrainIAC,canonical,frozen,ridge_canonical,,,True,26.2869172769855
+sub-764976,internal_test,BrainIAC,canonical,frozen,ridge_canonical,,,True,44.35724600398955
+sub-778481,internal_test,BrainIAC,canonical,frozen,ridge_canonical,,,True,19.771449919678197
+sub-992121,internal_test,BrainIAC,canonical,frozen,ridge_canonical,,,True,47.54323917633934

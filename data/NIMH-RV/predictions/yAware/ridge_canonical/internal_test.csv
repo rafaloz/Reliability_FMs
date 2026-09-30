@@ -1,0 +1,15 @@
+participant_id,split,model,variant,arm,run,seed,fold,primary,age_pred
+sub-ON11111,internal_test,yAware,canonical,frozen,ridge_canonical,,,True,53.77968850923537
+sub-ON25658,internal_test,yAware,canonical,frozen,ridge_canonical,,,True,25.45628460705561
+sub-ON26854,internal_test,yAware,canonical,frozen,ridge_canonical,,,True,25.95996064373484
+sub-ON33159,internal_test,yAware,canonical,frozen,ridge_canonical,,,True,32.49280115031433
+sub-ON50636,internal_test,yAware,canonical,frozen,ridge_canonical,,,True,34.5966536685071
+sub-ON52083,internal_test,yAware,canonical,frozen,ridge_canonical,,,True,24.86660222128021
+sub-ON67435,internal_test,yAware,canonical,frozen,ridge_canonical,,,True,53.76848679575394
+sub-ON70467,internal_test,yAware,canonical,frozen,ridge_canonical,,,True,32.30359241497443
+sub-ON80038,internal_test,yAware,canonical,frozen,ridge_canonical,,,True,38.300254764772085
+sub-ON85616,internal_test,yAware,canonical,frozen,ridge_canonical,,,True,34.3771767312996
+sub-ON86202,internal_test,yAware,canonical,frozen,ridge_canonical,,,True,27.265341026919145
+sub-ON87538,internal_test,yAware,canonical,frozen,ridge_canonical,,,True,24.86930539133936
+sub-ON94856,internal_test,yAware,canonical,frozen,ridge_canonical,,,True,41.2591775558672
+sub-ON97504,internal_test,yAware,canonical,frozen,ridge_canonical,,,True,22.70969420433513

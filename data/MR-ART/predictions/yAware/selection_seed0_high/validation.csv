@@ -1,0 +1,16 @@
+participant_id,split,model,variant,arm,run,seed,fold,primary,age_pred
+sub-000149,validation,yAware,canonical,adapted,selection_seed0_high,0,,True,40.69617232779295
+sub-000159,validation,yAware,canonical,adapted,selection_seed0_high,0,,True,25.223400678003028
+sub-012322,validation,yAware,canonical,adapted,selection_seed0_high,0,,True,27.476912283694148
+sub-067018,validation,yAware,canonical,adapted,selection_seed0_high,0,,True,17.819005402160776
+sub-127867,validation,yAware,canonical,adapted,selection_seed0_high,0,,True,65.30371423636653
+sub-149050,validation,yAware,canonical,adapted,selection_seed0_high,0,,True,20.394447237236346
+sub-196711,validation,yAware,canonical,adapted,selection_seed0_high,0,,True,22.326028613543016
+sub-228373,validation,yAware,canonical,adapted,selection_seed0_high,0,,True,27.476912283694148
+sub-275147,validation,yAware,canonical,adapted,selection_seed0_high,0,,True,18.784796090314117
+sub-441269,validation,yAware,canonical,adapted,selection_seed0_high,0,,True,22.16506349885079
+sub-535925,validation,yAware,canonical,adapted,selection_seed0_high,0,,True,24.66002277658025
+sub-687508,validation,yAware,canonical,adapted,selection_seed0_high,0,,True,45.94765919462672
+sub-791907,validation,yAware,canonical,adapted,selection_seed0_high,0,,True,39.34808949224559
+sub-890465,validation,yAware,canonical,adapted,selection_seed0_high,0,,True,20.716377466620788
+sub-987325,validation,yAware,canonical,adapted,selection_seed0_high,0,,True,28.684150643885825
