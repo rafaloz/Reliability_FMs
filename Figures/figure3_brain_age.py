@@ -56,6 +56,8 @@ SCANNER_LABELS = (
     "Prisma 64",
     "Trio",
 )
+SCANNER_REFERENCE = "Ach"
+SCANNER_COLOR_LIMIT_YEARS = 16.0
 
 VENDOR_GROUPS = (
     (0, 2, "GE Healthcare"),
@@ -167,7 +169,10 @@ def validate_payload(payload: dict) -> dict:
             record.get("cross_scanner_absolute_difference", {}),
             f"{condition} absolute scanner difference",
         )
-        effects = record.get("scanner_effects", {}).get("effects", [])
+        scanner_record = record.get("scanner_effects", {})
+        if scanner_record.get("reference_scanner") != SCANNER_REFERENCE:
+            raise ValueError(f"Scanner effects are not relative to NOT1 for {condition}")
+        effects = scanner_record.get("effects", [])
         if [effect.get("scanner") for effect in effects] != list(SCANNER_ORDER):
             raise ValueError(f"Invalid scanner effects for {condition}")
         effect_values = np.asarray(
@@ -175,8 +180,17 @@ def validate_payload(payload: dict) -> dict:
         )
         if not np.isfinite(effect_values).all():
             raise ValueError(f"Non-finite scanner effects for {condition}")
-        if not np.isclose(effect_values.sum(), 0.0, atol=1e-8):
-            raise ValueError(f"Scanner effects do not sum to zero for {condition}")
+        reference_index = SCANNER_ORDER.index(SCANNER_REFERENCE)
+        if not np.isclose(effect_values[reference_index], 0.0, atol=1e-8):
+            raise ValueError(f"Reference scanner effect is not zero for {condition}")
+        for effect in effects:
+            bootstrap = np.asarray(effect.get("bootstrap_values", []), dtype=float)
+            if bootstrap.shape != (1000,) or not np.isfinite(bootstrap).all():
+                raise ValueError(f"Invalid scanner bootstrap for {condition}")
+            if effect["scanner"] == SCANNER_REFERENCE and not np.allclose(
+                [*bootstrap, effect["ci_lower"], effect["ci_upper"]], 0.0, atol=1e-8
+            ):
+                raise ValueError(f"Reference scanner uncertainty is not zero for {condition}")
 
     analysis_script = Path(payload.get("code", {}).get("analysis_script", ""))
     expected_hash = payload.get("code", {}).get("analysis_script_sha256")
@@ -428,7 +442,9 @@ def render(payload: dict, *, output_dir: Path, dpi: int) -> list[Path]:
         ],
         dtype=float,
     )
-    maximum = float(np.ceil(np.max(np.abs(effects))))
+    maximum = SCANNER_COLOR_LIMIT_YEARS
+    if np.max(np.abs(effects)) > maximum:
+        raise ValueError("Frozen scanner effects exceed the shared Figure 3/4 color scale")
     diverging = LinearSegmentedColormap.from_list(
         "scanner_shift", (COLORS["turquoise"], "#F7F7F5", COLORS["orange"])
     )
@@ -444,7 +460,7 @@ def render(payload: dict, *, output_dir: Path, dpi: int) -> list[Path]:
     axis_heat.set_xticks(np.arange(len(SCANNER_LABELS)), SCANNER_LABELS)
     axis_heat.tick_params(axis="y", length=0, pad=7, labelsize=13)
     axis_heat.tick_params(axis="x", length=0, pad=7, labelsize=11.8)
-    axis_heat.set_xlabel("Scanner")
+    axis_heat.set_xlabel("Scanner (reference: NOT1 / Achieva)")
     axis_heat.set_title(
         "d   Participant-adjusted scanner shifts in predicted age",
         loc="left",
@@ -465,7 +481,7 @@ def render(payload: dict, *, output_dir: Path, dpi: int) -> list[Path]:
             axis_heat.text(
                 column,
                 row,
-                f"{value:+.1f}",
+                "ref." if SCANNER_ORDER[column] == SCANNER_REFERENCE else f"{value:+.1f}",
                 ha="center",
                 va="center",
                 fontsize=11.2,
@@ -476,7 +492,7 @@ def render(payload: dict, *, output_dir: Path, dpi: int) -> list[Path]:
 
     colorbar = figure.colorbar(image, cax=axis_colorbar)
     colorbar.set_label(
-        "Participant-adjusted shift (years)",
+        "Difference from NOT1 (years)",
         rotation=270,
         labelpad=26,
         fontsize=13.5,

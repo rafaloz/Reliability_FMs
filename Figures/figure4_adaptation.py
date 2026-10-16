@@ -56,6 +56,7 @@ SCANNER_LABELS = (
     "Prisma 64",
     "Trio",
 )
+SCANNER_REFERENCE = "Ach"
 
 VENDOR_GROUPS = (
     (0, 2, "GE Healthcare"),
@@ -63,7 +64,7 @@ VENDOR_GROUPS = (
     (5, 7, "Siemens"),
 )
 
-SCANNER_COLOR_LIMIT_YEARS = 12.0
+SCANNER_COLOR_LIMIT_YEARS = 16.0
 
 EXPECTED_PRIMARY_COUNTS = {
     "yaware": 3,
@@ -274,9 +275,10 @@ def validate_payload(payload: dict) -> dict:
             if not np.isfinite(np.asarray(values, dtype=float)).all():
                 raise ValueError(f"Invalid run values for {condition}/{run_name}")
 
-        scanner_effects = record.get("adapted_scanner_effects", {}).get(
-            "effects", []
-        )
+        scanner_record = record.get("adapted_scanner_effects", {})
+        if scanner_record.get("reference_scanner") != SCANNER_REFERENCE:
+            raise ValueError(f"Adapted scanner effects are not relative to NOT1 for {condition}")
+        scanner_effects = scanner_record.get("effects", [])
         if tuple(effect.get("scanner") for effect in scanner_effects) != SCANNER_ORDER:
             raise ValueError(f"Wrong adapted scanner order for {condition}")
         estimates = []
@@ -295,12 +297,13 @@ def validate_payload(payload: dict) -> dict:
             if bootstrap.shape != (1000,) or not np.isfinite(bootstrap).all():
                 raise ValueError(f"Invalid adapted scanner bootstrap for {condition}")
             bootstrap_columns.append(bootstrap)
-        if not np.isclose(np.sum(estimates), 0.0, atol=1e-8):
-            raise ValueError(f"Adapted scanner effects do not sum to zero for {condition}")
+        reference_index = SCANNER_ORDER.index(SCANNER_REFERENCE)
+        if not np.isclose(estimates[reference_index], 0.0, atol=1e-8):
+            raise ValueError(f"Adapted reference scanner is not zero for {condition}")
         bootstrap_matrix = np.column_stack(bootstrap_columns)
-        if not np.allclose(bootstrap_matrix.sum(axis=1), 0.0, atol=1e-8):
+        if not np.allclose(bootstrap_matrix[:, reference_index], 0.0, atol=1e-8):
             raise ValueError(
-                f"Adapted scanner bootstraps do not sum to zero for {condition}"
+                f"Adapted reference scanner bootstrap is not zero for {condition}"
             )
 
     analysis_script = Path(payload.get("code", {}).get("analysis_script", ""))
@@ -716,7 +719,7 @@ def render(payload: dict, *, output_dir: Path, dpi: int) -> list[Path]:
     axis_heat.set_xticks(np.arange(len(SCANNER_LABELS)), SCANNER_LABELS)
     axis_heat.tick_params(axis="y", length=0, pad=7, labelsize=13)
     axis_heat.tick_params(axis="x", length=0, pad=7, labelsize=11.8)
-    axis_heat.set_xlabel("Scanner")
+    axis_heat.set_xlabel("Scanner (reference: NOT1 / Achieva)")
     axis_heat.set_title(
         "d   Fine-tuned participant-adjusted scanner shifts",
         loc="left",
@@ -741,7 +744,7 @@ def render(payload: dict, *, output_dir: Path, dpi: int) -> list[Path]:
             axis_heat.text(
                 column,
                 row,
-                f"{value:+.1f}",
+                "ref." if SCANNER_ORDER[column] == SCANNER_REFERENCE else f"{value:+.1f}",
                 ha="center",
                 va="center",
                 fontsize=11.2,
@@ -756,7 +759,7 @@ def render(payload: dict, *, output_dir: Path, dpi: int) -> list[Path]:
 
     colorbar = figure.colorbar(image, cax=axis_colorbar)
     colorbar.set_label(
-        "Participant-adjusted shift (years)",
+        "Difference from NOT1 (years)",
         rotation=270,
         labelpad=26,
         fontsize=13.5,

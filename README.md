@@ -43,6 +43,12 @@ Figure 3 separates test MAE, predicted-age dbICC and absolute cross-scanner chan
 Figure 4 uses paired gains and global BH correction over seven models and three
 endpoints. Metrics are averaged across retained runs, not predictions.
 
+In both prediction figures, scanner shifts are adjusted for participant and
+reported relative to NOT1 (Philips Achieva), which was used in both ON-Harmony
+phases. Positive values mean older predictions than NOT1, not overestimation
+relative to chronological age. NOT1 is zero by definition, not a gold standard.
+Scanner contrasts are recalculated within every participant-bootstrap replicate.
+
 ## Result data
 
 The deposit contains 22 data CSVs, plus inventories and dictionaries:

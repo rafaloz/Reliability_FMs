@@ -84,6 +84,8 @@ SCANNER_ORDER = (
     "Pri64",
     "Trio",
 )
+SCANNER_REFERENCE = "Ach"
+SCANNER_REFERENCE_LABEL = "NOT1 (Achieva)"
 
 
 @dataclass(frozen=True)
@@ -480,8 +482,30 @@ def aggregate_scalar_bootstrap(
     return result
 
 
-def scanner_effects(cells: pd.DataFrame, scanner_order: tuple[str, ...]) -> np.ndarray:
-    """Fit participant fixed intercepts and sum-to-zero scanner effects."""
+def reference_scanner_effects(
+    effects: np.ndarray,
+    scanner_order: tuple[str, ...],
+    reference_scanner: str,
+) -> np.ndarray:
+    """Contrast each scanner with the reference, including within bootstrap draws."""
+    values = np.asarray(effects, dtype=np.float64)
+    if values.ndim < 1 or values.shape[-1] != len(scanner_order):
+        raise ValueError("Scanner effects do not match the scanner order")
+    if not np.isfinite(values).all():
+        raise ValueError("Scanner effects contain non-finite values")
+    if reference_scanner not in scanner_order:
+        raise ValueError(f"Unknown reference scanner: {reference_scanner}")
+    index = scanner_order.index(reference_scanner)
+    return values - values[..., index : index + 1]
+
+
+def scanner_effects(
+    cells: pd.DataFrame,
+    scanner_order: tuple[str, ...],
+    *,
+    reference_scanner: str | None = None,
+) -> np.ndarray:
+    """Fit participant-adjusted shifts, optionally relative to a named scanner."""
     required = {"subject_id", "scanner", "age_pred"}
     if not required.issubset(cells.columns):
         raise ValueError(f"Scanner model lacks columns: {sorted(required - set(cells))}")
@@ -514,6 +538,8 @@ def scanner_effects(cells: pd.DataFrame, scanner_order: tuple[str, ...]) -> np.n
     effects = np.concatenate([first, [-float(first.sum())]])
     if not np.isclose(effects.sum(), 0.0, atol=1e-10):
         raise RuntimeError("Scanner effects do not satisfy the sum-to-zero constraint")
+    if reference_scanner is not None:
+        return reference_scanner_effects(effects, scanners, reference_scanner)
     return effects
 
 
@@ -558,14 +584,18 @@ def compute_scanner_effect_bootstrap(
     scanner_order: tuple[str, ...],
 ) -> dict:
     fold_estimates = np.asarray(
-        [scanner_effects(cells, scanner_order) for cells in fold_cells],
+        [scanner_effects(cells, scanner_order, reference_scanner=SCANNER_REFERENCE)
+         for cells in fold_cells],
         dtype=np.float64,
     )
     estimate = fold_estimates.mean(axis=0)
     bootstrap = np.empty((len(samples), len(scanner_order)), dtype=np.float64)
     for index, sample in enumerate(samples):
         effects = [
-            scanner_effects(resample_cells(cells, sample), scanner_order)
+            scanner_effects(
+                resample_cells(cells, sample), scanner_order,
+                reference_scanner=SCANNER_REFERENCE,
+            )
             for cells in fold_cells
         ]
         bootstrap[index] = np.mean(effects, axis=0)
@@ -589,7 +619,9 @@ def compute_scanner_effect_bootstrap(
         "rms_effect_years": float(np.sqrt(np.mean(estimate**2))),
         "maximum_absolute_effect_years": float(np.max(np.abs(estimate))),
         "model": "age_prediction ~ participant_fixed_intercept + scanner_fixed_effect",
-        "constraint": "scanner effects sum to zero with equal weight across eight scanners",
+        "constraint": "reference scanner effect fixed to zero",
+        "reference_scanner": SCANNER_REFERENCE,
+        "reference_scanner_label": SCANNER_REFERENCE_LABEL,
         "repeat_handling": (
             "acquisition 001 retained in each participant-scanner cell"
         ),
@@ -893,7 +925,7 @@ def build_analysis(args: argparse.Namespace) -> dict:
                 "scanner-cell predictions"
             ),
             "scanner_bias": (
-                "sum-to-zero scanner fixed effects after participant fixed intercepts"
+                "participant-adjusted scanner shifts relative to NOT1 (Achieva)"
             ),
             "bag_policy": (
                 "BAG ICC is not used; within-participant absolute differences and "

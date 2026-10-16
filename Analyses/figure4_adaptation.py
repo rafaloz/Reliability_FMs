@@ -45,6 +45,9 @@ from Analyses.figure3_brain_age import (  # noqa: E402
     EXPECTED_ONHARMONY_SUBJECTS,
     EXPECTED_SCANNERS,
     SCANNER_ORDER,
+    SCANNER_REFERENCE,
+    SCANNER_REFERENCE_LABEL,
+    reference_scanner_effects,
     acquisition_table,
     benjamini_hochberg,
     internal_test_table,
@@ -345,6 +348,8 @@ def scanner_effects_batched(
     cells: pd.DataFrame,
     predictions: np.ndarray,
     scanner_order: tuple[str, ...],
+    *,
+    reference_scanner: str | None = None,
 ) -> np.ndarray:
     """Fit one fixed-effects design to multiple prediction vectors."""
     required = {"subject_id", "scanner"}
@@ -385,6 +390,8 @@ def scanner_effects_batched(
     effects = np.vstack([first, -first.sum(axis=0)]).T
     if not np.allclose(effects.sum(axis=1), 0.0, atol=1e-10):
         raise RuntimeError("Scanner effects do not satisfy the sum-to-zero constraint")
+    if reference_scanner is not None:
+        return reference_scanner_effects(effects, scanners, reference_scanner)
     return effects
 
 
@@ -420,7 +427,8 @@ def compute_scanner_effect_bootstraps_batched(
 
     prediction_matrix = np.column_stack(prediction_columns)
     run_estimates = scanner_effects_batched(
-        reference_cells, prediction_matrix, scanner_order
+        reference_cells, prediction_matrix, scanner_order,
+        reference_scanner=SCANNER_REFERENCE,
     )
     bootstrap_by_condition = {
         condition: np.empty((len(samples), len(scanner_order)), dtype=np.float64)
@@ -446,7 +454,8 @@ def compute_scanner_effect_bootstraps_batched(
         sampled_cells["subject_id"] = copied_subjects
         sampled_predictions = prediction_matrix[np.asarray(indices, dtype=np.int64)]
         sampled_run_effects = scanner_effects_batched(
-            sampled_cells, sampled_predictions, scanner_order
+            sampled_cells, sampled_predictions, scanner_order,
+            reference_scanner=SCANNER_REFERENCE,
         )
         for condition, columns in column_indices.items():
             bootstrap_by_condition[condition][bootstrap_index] = (
@@ -479,9 +488,9 @@ def compute_scanner_effect_bootstraps_batched(
             "model": (
                 "age_prediction ~ participant_fixed_intercept + scanner_fixed_effect"
             ),
-            "constraint": (
-                "scanner effects sum to zero with equal weight across eight scanners"
-            ),
+            "constraint": "reference scanner effect fixed to zero",
+            "reference_scanner": SCANNER_REFERENCE,
+            "reference_scanner_label": SCANNER_REFERENCE_LABEL,
             "repeat_handling": (
                 "acquisition 001 retained in each participant-scanner cell"
             ),
