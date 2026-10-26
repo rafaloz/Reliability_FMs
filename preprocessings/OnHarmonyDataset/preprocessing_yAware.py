@@ -155,12 +155,12 @@ def preprocess_single(input_file, output_dir, matlab_cmd,
     subj_dir = os.path.join(output_dir, stem)
     os.makedirs(subj_dir, exist_ok=True)
 
-    print(f"  [Preprocessing 1/2] CAT12 VBM segmentation (Dartel, IXI, vox=1.5): {stem}")
+    print(f"  [1/2] CAT12 VBM segmentation (Dartel, IXI, vox=1.5): {stem}")
     # Forward the CLI/environment-resolved Dartel template to the validated batch.
     gm_file = run_cat12_matlab(input_file, subj_dir, matlab_cmd,
                                dartel_tpm=dartel_tpm)
 
-    print(f"  [Preprocessing 2/2] Z-score normalize (per-volume, matches yAware augmentations.py Normalize): {stem}")
+    print(f"  [2/2] Z-score normalize + save as .npy: {stem}")
     img = nib.load(gm_file)
     data = img.get_fdata().astype(np.float32)
     shape = data.shape[:3]
@@ -178,7 +178,6 @@ def preprocess_single(input_file, output_dir, matlab_cmd,
     data = zscore_normalize(data)
     data = data[np.newaxis, ...]  # (1, D, H, W)
 
-    print(f"  [Output] Save .npy [1,121,145,121]: {stem}")
     final_out = os.path.join(subj_dir, f"{stem}_yaware_ready.npy")
     np.save(final_out, data)
 

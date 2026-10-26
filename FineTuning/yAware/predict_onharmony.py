@@ -44,7 +44,7 @@ DEFAULT_PREPROC_ROOT = (
 DEFAULT_LOG_ROOT = PROJECT_ROOT / "preprocessings" / "OnHarmonyDataset" / "logs_preprocs"
 PREPROCESSOR = PROJECT_ROOT / "preprocessings" / "OnHarmonyDataset" / "preprocessing_yAware.py"
 EXPECTED_PREPROCESSOR_SHA256 = (
-    "6180bd9db4905804c89d59d5b4a0e6571dea32dbbf8b79ab1bb51a65df82c33f"
+    "c8894e5a00b263677e9b798fed71ac6b2be58789a1ee8fa9e077f7c2dd2977f3"
 )
 
 
