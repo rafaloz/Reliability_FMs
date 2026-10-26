@@ -75,10 +75,14 @@ can be calculated without ages. Seeds and folds must be analysed separately
 before averaging their metrics; predictions are not ensembled.
 
 Inventories map each original export to its compact file; `rows` refers to
-that original export, not the whole compact file. The existing analysis
-commands use the original audited study bundles, not these compact CSVs
-directly. `tools/compact_derivatives.py` converts validated per-run exports
-into this layout without changing retained numeric values.
+that original export, not the whole compact file.
+`Analyses/reproduce_published.py` connects these CSVs directly to the existing
+statistical functions. See [`REPRODUCING_RESULTS.md`](REPRODUCING_RESULTS.md)
+for cross-scanner calculations without ages, optional local age input for
+internal-test accuracy, REML and figure-generation commands. The original
+analysis entry points remain available for the audited study bundles.
+`tools/compact_derivatives.py` creates the compact layout without changing
+retained numeric values.
 
 ## Environment
 

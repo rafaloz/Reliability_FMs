@@ -451,7 +451,15 @@
     },
     {
       "path": "INSTALLATION.md",
-      "sha256": "0b2685cf7c92d3314c1da0efa5bc7bc8b310964357c5662123442f0aa6119bf1"
+      "sha256": "a228b037cf398ea015c31e9c1930324b78941c3197766f9476fd30e09235e905"
+    },
+    {
+      "path": "Analyses/reproduce_published.py",
+      "sha256": "ab7e98a12381b6e32e1f0c190cde4b707b2e80a346106eb7ac910d4bef552e3b"
+    },
+    {
+      "path": "REPRODUCING_RESULTS.md",
+      "sha256": "d7937b7c1accbce59b379ecbb6c7777dbc91b8c45fc6e441ad532c7f42b0a866"
     }
   ]
 }

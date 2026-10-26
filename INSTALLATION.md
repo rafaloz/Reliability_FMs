@@ -38,6 +38,9 @@ The MRI-input illustration and model-specific QC scripts also need the
 corresponding model environment and actual images. They are not required to
 calculate reliability from the published embeddings and predictions.
 
+See [`REPRODUCING_RESULTS.md`](REPRODUCING_RESULTS.md) for runnable analysis
+and figure-generation commands using the published CSVs.
+
 ## Model execution
 
 Acquire images and demographics from the original datasets, and templates and
