@@ -179,7 +179,7 @@
     },
     {
       "path": "FineTuning/NeuroVFM/README.md",
-      "sha256": "1e44d946c6de14e4795f44c5e61174823c46118208ea942489d2b26b30943954"
+      "sha256": "6b8c7702be832626d0ba39558b325bbec741c9d87caac117c896e762072aa3cf"
     },
     {
       "path": "FineTuning/NeuroVFM/__init__.py",
@@ -440,6 +440,18 @@
     {
       "path": "tools/compact_derivatives.py",
       "sha256": "2a659e95e55dfce0a10acd045b1e1363fe2757e29e8df580d54e2eb15a97e524"
+    },
+    {
+      "path": "tools/prepare_reproduction_selections.py",
+      "sha256": "0f6e93a1856fcd00bd01fe3cd355a2fe950c454ad2fc51b3ca1edc31d3989eb2"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "dfca36667726acd7b07f54fcb406112aeaa7532aea1d8c20e1cbb9cbf7f6b9cc"
+    },
+    {
+      "path": "INSTALLATION.md",
+      "sha256": "0b2685cf7c92d3314c1da0efa5bc7bc8b310964357c5662123442f0aa6119bf1"
     }
   ]
 }

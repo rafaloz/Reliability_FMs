@@ -21,6 +21,11 @@ All commands require the dedicated `neurovfm` environment and a BF16-capable
 GPU with compute capability `sm_80` or newer. The RTX A5000 (`sm_86`) is
 compatible. A T4 (`sm_75`) is not.
 
+For installation, use the [official upstream instructions at the pinned commit](https://github.com/MLNeurosurg/neurovfm/tree/9240021d4ef5c262b21cee5d219c2adf65f4d42f#installation).
+The Python/CUDA dependency notes and distinction between the upstream
+specification and the study runtime are in
+[`../../INSTALLATION.md`](../../INSTALLATION.md#neurovfm).
+
 ## Audit and smoke test
 
 Run this before any extraction or training:

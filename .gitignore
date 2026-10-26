@@ -29,6 +29,7 @@ Snapshots/
 !/data/MR-ART/**/*.csv
 !/data/ON-Harmony/**/*.csv
 !/data/sources.csv
+!/data/cohort_splits.csv
 *.tsv
 *.xlsx
 *.xls

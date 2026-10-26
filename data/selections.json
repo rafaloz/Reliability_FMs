@@ -1,0 +1,31 @@
+{
+  "schema": "reproduction_selections_v1",
+  "sources": {
+    "definitive_manifest_sha256": "b2ee2dc7e06349ef1ac550da2061274ee724d2b121ddd652b37c1907ae8bc212",
+    "onharmony_participants_sha256": "b0bb8644c6e6de48b339608ff7f697ac0d5f8e2e0132bf7be529a912e8c006ec",
+    "onharmony_metadata_csv": "ON-Harmony/embeddings/yaware.csv",
+    "onharmony_metadata_sha256": "08f799eb266a2dfd7b833eb5fba7b28409bee341493bf84fad6a0c19a0233418"
+  },
+  "files": {
+    "cohort_splits.csv": {
+      "sha256": "39b553804a4664a16a05cd95eedc6b28e1504e9f59637cd4a325895c94fc635e",
+      "rows": 1411,
+      "columns": [
+        "dataset",
+        "subject",
+        "split"
+      ]
+    },
+    "ON-Harmony/acquisitions.csv": {
+      "sha256": "453723b72f63ac3a62c4865c1807dce23207ea146cc2046ed110fe220f0f98ae",
+      "rows": 165,
+      "columns": [
+        "participant_id",
+        "session_id",
+        "scanner",
+        "phase",
+        "primary_acquisition"
+      ]
+    }
+  }
+}

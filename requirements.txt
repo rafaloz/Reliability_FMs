@@ -1,0 +1,9 @@
+# Python 3.10: CPU statistical analyses and figure rendering.
+# GPU model execution uses separate upstream environments; see INSTALLATION.md.
+numpy==2.2.6
+pandas==2.3.3
+scipy==1.15.3
+scikit-learn==1.7.2
+matplotlib==3.10.0
+Pillow==9.4.0
+nibabel==5.2.0

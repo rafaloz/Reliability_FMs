@@ -25,6 +25,11 @@ counts and paths in those documents are study records, not files in this clone.
 
 ## Statistical workflow
 
+Installation commands and model-environment requirements are in
+[`INSTALLATION.md`](INSTALLATION.md). The exact development splits and
+ON-Harmony acquisition selection are in
+[`data/SELECTIONS.md`](data/SELECTIONS.md).
+
 The cohort contains 1,130 train, 141 validation and 140 internal-test subjects.
 Selection uses validation only. ON-Harmony inference produces 165 acquisitions;
 primary analyses retain the first acquisition in each of 120 participant-scanner
@@ -76,6 +81,9 @@ directly. `tools/compact_derivatives.py` converts validated per-run exports
 into this layout without changing retained numeric values.
 
 ## Environment
+
+Install the CPU analysis dependencies with `python -m pip install -r requirements.txt`.
+See [`INSTALLATION.md`](INSTALLATION.md) for R packages and separate GPU setup.
 
 GPU execution needs model-specific dependencies and official checkpoint/code
 revisions checked by each `FineTuning/<model>/model.py`. NeuroVFM requires its
