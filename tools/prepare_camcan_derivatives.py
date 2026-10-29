@@ -111,20 +111,21 @@ def export(args):
 
     try:
         for spec in FROZEN_MODELS:
-            for variant_path in spec.variants:
+            variants = tuple(f"AnatCL/fold{i}" for i in range(5)) if spec.condition == "anatcl" else spec.variants
+            for variant_path in variants:
                 model, variant = variant_path.split("/")
                 fold = variant.removeprefix("fold") if model == "AnatCL" else ""
                 suffix = "_bfloat16_v3" if model == "AnatCL" else ""
                 embedding_path = "BrainSegFounder/canonical" if model == "BrainSegFounder" else variant_path
                 for split in counts:
                     path = args.brain_age_root / f"embeddings_FT{suffix}" / embedding_path / f"{split}.tsv"
-                    save(path, split, model, variant, "embedding", variant, fold=fold,
+                    save(path, split, model, variant, "embedding", variant, fold=fold, primary=variant_path in spec.variants,
                          audit=Path(str(path) + ".audit.json"))
                 fit = args.brain_age_root / f"frozen{suffix}" / variant_path
                 for split in ("validation", "internal_test"):
                     path = fit / "locked_validation_predictions.tsv" if split == "validation" else (
                         args.brain_age_root / "internal_test" / f"frozen{suffix}" / variant_path / "predictions_internal_test.tsv")
-                    save(path, split, model, variant, "frozen", f"ridge_{variant}", fold=fold,
+                    save(path, split, model, variant, "frozen", f"ridge_{variant}", fold=fold, primary=variant_path in spec.variants,
                          audit=fit / "INTERNAL_TEST_EVALUATED.json" if split == "internal_test" else None)
         for spec in ADAPTED_MODELS:
             for run in spec.runs:
@@ -144,7 +145,7 @@ def export(args):
             "run": "Representation or retained training-run identifier.",
             "seed": "Training seed; blank for frozen embeddings and Ridge.",
             "fold": "AnatCL pretrained fold 0-4; otherwise blank.",
-            "primary": "False marks AnatCL fold0 seeds1-2 sensitivity runs; no predictions are ensembled.",
+            "primary": "AnatCL uses fold0 in primary analyses, with all three fine-tuning seeds; folds1-4 are sensitivity runs. No predictions are ensembled.",
             "emb_*": "Frozen encoder feature values; axes are not interchangeable across models or folds.",
             "age_pred": "Predicted age in years, inverse-transformed with training statistics; not clipped.",
             "file": "Relative path within this deposit.", "rows": "Number of cohort rows in the CSV.",

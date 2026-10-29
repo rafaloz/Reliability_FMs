@@ -20,7 +20,7 @@ import numpy as np
 
 
 SCRIPT_PATH = Path(__file__).resolve()
-PROJECT_ROOT = SCRIPT_PATH.parents[1]
+PROJECT_ROOT = next(parent for parent in SCRIPT_PATH.parents if (parent / 'Analyses').is_dir())
 DEFAULT_RESULTS = PROJECT_ROOT / "Results" / "Figure4" / "figure4_adaptation_results.json"
 DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "Figures"
 DEFAULT_MANIFEST = PROJECT_ROOT / "Results" / "Figure4" / "figure4_figure_manifest.json"
@@ -68,7 +68,7 @@ SCANNER_COLOR_LIMIT_YEARS = 16.0
 
 EXPECTED_PRIMARY_COUNTS = {
     "yaware": 3,
-    "anatcl": 5,
+    "anatcl": 3,
     "brainsegfounder": 3,
     "3dneurosimclr": 3,
     "neurovfm": 3,

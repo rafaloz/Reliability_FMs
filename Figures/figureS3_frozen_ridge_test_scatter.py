@@ -20,7 +20,7 @@ import numpy as np
 
 
 SCRIPT_PATH = Path(__file__).resolve()
-PROJECT_ROOT = SCRIPT_PATH.parents[1]
+PROJECT_ROOT = next(parent for parent in SCRIPT_PATH.parents if (parent / 'Analyses').is_dir())
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -170,21 +170,23 @@ def load_conditions(
                 {
                     "model": spec.label,
                     "variant": variant,
+                    "displayed": variant == ("AnatCL/fold0" if spec.condition == "anatcl" else spec.variants[0]),
                     "predictions": str(predictions_path.resolve()),
                     "predictions_sha256": provenance["predictions_sha256"],
                     "metrics": str(metrics_path.resolve()),
                     "metrics_sha256": provenance["metrics_sha256"],
                 }
             )
+        display_variant = "AnatCL/fold0" if spec.condition == "anatcl" else spec.variants[0]
+        display_index = spec.variants.index(display_variant)
         conditions.append(
             {
                 "condition": spec.condition,
                 "label": spec.label,
-                "frames": frames,
-                "metrics": metrics,
-                "run_definition": (
-                    "five pretrained folds" if spec.condition == "anatcl" else "one run"
-                ),
+                "frames": [frames[display_index]],
+                "metrics": [metrics[display_index]],
+                "display_variant": display_variant,
+                "run_definition": "AnatCL fold0" if spec.condition == "anatcl" else "one run",
             }
         )
     if reference_identity is None or len(reference_identity) != EXPECTED_INTERNAL_TEST_ROWS:
@@ -354,12 +356,14 @@ def main() -> None:
     atomic_json(
         manifest_path,
         {
-            "figure": "Supplementary Figure S3: frozen-Ridge internal-test predictions",
+            "figure": "Supplementary Figure S2: frozen-Ridge internal-test predictions",
             "cohort": {"split": "internal_test", "subjects": 140},
             "display": (
-                "one point per locked subject-run prediction; metrics averaged across "
-                "runs; predictions not ensembled"
+                "one point per participant; one run per model, AnatCL fold0; "
+                "metrics and CIs use the displayed run"
             ),
+            "displayed_runs": {c["condition"]: c["display_variant"] for c in conditions},
+            "displayed_accuracy": {c["condition"]: c["metrics"] for c in conditions},
             "script": str(SCRIPT_PATH),
             "accuracy_summaries": {c["condition"]: c["accuracy_summary"] for c in conditions},
             "script_sha256": sha256_file(SCRIPT_PATH),

@@ -127,17 +127,17 @@ MODEL_SPECS = (
         "AnatCL",
         (
             RunSpec("fold0_seed0_high", 0, "fold0", "fold0", fold=0),
-            RunSpec("fold1_seed0_high", 0, "fold1", "fold1", fold=1),
-            RunSpec("fold2_seed0_high", 0, "fold2", "fold2", fold=2),
-            RunSpec("fold3_seed0_high", 0, "fold3", "fold3", fold=3),
-            RunSpec("fold4_seed0_high", 0, "fold4", "fold4", fold=4),
+            RunSpec("fold1_seed0_high", 0, "fold1", "fold1", fold=1, primary=False),
+            RunSpec("fold2_seed0_high", 0, "fold2", "fold2", fold=2, primary=False),
+            RunSpec("fold3_seed0_high", 0, "fold3", "fold3", fold=3, primary=False),
+            RunSpec("fold4_seed0_high", 0, "fold4", "fold4", fold=4, primary=False),
             RunSpec(
                 "fold0_seed1_high",
                 1,
                 "fold0",
                 "fold0",
                 fold=0,
-                primary=False,
+                primary=True,
             ),
             RunSpec(
                 "fold0_seed2_high",
@@ -145,10 +145,10 @@ MODEL_SPECS = (
                 "fold0",
                 "fold0",
                 fold=0,
-                primary=False,
+                primary=True,
             ),
         ),
-        "arithmetic mean of matched folds 0-4 at seed 0",
+        "arithmetic mean of fold 0 seeds 0, 1, and 2",
     ),
     ModelSpec(
         "brainsegfounder",
@@ -1150,15 +1150,11 @@ def build_analysis(args: argparse.Namespace) -> dict:
                 )
 
         if spec.condition == "anatcl":
-            sensitivity_names = (
-                "fold0_seed0_high",
-                "fold0_seed1_high",
-                "fold0_seed2_high",
-            )
+            sensitivity_names = tuple(f"fold{fold}_seed0_high" for fold in range(5))
             sensitivity = {
-                "type": "initialization sensitivity at fixed fold 0",
+                "type": "pretrained-fold sensitivity at fixed seed 0",
                 "runs": [run_results[name] for name in sensitivity_names],
-                "not_pooled_with_primary_fold_sensitivity": True,
+                "evaluated_separately_from_primary_seed_average": True,
             }
         else:
             sensitivity = {
@@ -1237,7 +1233,7 @@ def build_analysis(args: argparse.Namespace) -> dict:
             "without sacrificing cross-acquisition robustness?"
         ),
         "primary_estimand": (
-            "mean single-run metric under the prespecified retained-run hierarchy; "
+            "mean single-run metric across three selected-LR seeds per checkpoint; "
             "not an ensemble"
         ),
         "gain_definitions": {
@@ -1272,8 +1268,8 @@ def build_analysis(args: argparse.Namespace) -> dict:
         },
         "training_hierarchy": {
             "non_anatcl": "selected-LR seeds 0, 1, and 2",
-            "anatcl_primary": "matched folds 0-4 at seed 0",
-            "anatcl_initialization_sensitivity": "fold 0 seeds 0, 1, and 2",
+            "anatcl_primary": "fold 0 seeds 0, 1, and 2",
+            "anatcl_pretraining_fold_sensitivity": "folds 0-4 at seed 0",
             "aggregation": (
                 "per-run metrics are averaged inside each shared participant bootstrap; "
                 "predictions are never averaged"

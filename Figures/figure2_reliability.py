@@ -19,7 +19,7 @@ import numpy as np
 
 
 SCRIPT_PATH = Path(__file__).resolve()
-PROJECT_ROOT = SCRIPT_PATH.parents[1]
+PROJECT_ROOT = next(parent for parent in SCRIPT_PATH.parents if (parent / 'Analyses').is_dir())
 DEFAULT_RESULTS = PROJECT_ROOT / "Results" / "Figure2" / "figure2_reliability_results.json"
 DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "Figures"
 DEFAULT_MANIFEST = PROJECT_ROOT / "Results" / "Figure2" / "figure2_figure_manifest.json"

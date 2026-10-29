@@ -10,7 +10,7 @@ from Analyses.figure2_reliability import bootstrap_indices
 
 
 def accuracy_summary(frames, *, external=False):
-    root = Path(__file__).resolve().parents[1]
+    root = next(parent for parent in Path(__file__).resolve().parents if (parent / 'Analyses').is_dir())
     contract_path = root / "Results/Figure3/figure3_brain_age_results.json"
     contract = json.loads(contract_path.read_text())["cohorts"]
     cohort = contract["onharmony" if external else "internal_test"]

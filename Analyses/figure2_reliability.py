@@ -60,6 +60,7 @@ class InputSpec:
     expected_dimensions: int
     role: str
     manifest_files: tuple[str, ...] = ()
+    primary_folds: tuple[int, ...] = (0,)
 
 
 INPUT_SPECS = (
@@ -554,7 +555,7 @@ def aggregate_fold_results(results: list[dict]) -> dict:
         ),
         "n_folds": len(results),
         "fold_aggregation": (
-            "arithmetic mean of five fold dbICC estimates; confidence interval "
+            "arithmetic mean of selected fold dbICC estimates; confidence interval "
             "from the mean across folds within each shared participant bootstrap"
         ),
         "n_sessions_input": results[0]["n_sessions_input"],
@@ -790,7 +791,11 @@ def build_analysis(args: argparse.Namespace) -> dict:
                 f"{spec.label} does not contain exactly "
                 f"{EXPECTED_SUBJECT_SCANNER_CELLS} primary acquisitions"
             )
-        dbicc = aggregate_fold_results(fold_dbicc)
+        if not spec.primary_folds or any(
+            fold < 0 or fold >= len(fold_dbicc) for fold in spec.primary_folds
+        ):
+            raise ValueError(f"Invalid primary fold selection for {spec.condition}")
+        dbicc = aggregate_fold_results([fold_dbicc[fold] for fold in spec.primary_folds])
         fold_reml = []
         if not args.skip_reml:
             for fold in range(len(fold_dbicc)):
@@ -808,24 +813,38 @@ def build_analysis(args: argparse.Namespace) -> dict:
                         reuse_existing=args.reuse_reml,
                     )
                 )
-            variance = aggregate_trace_results(fold_reml)
+            variance = aggregate_trace_results([fold_reml[fold] for fold in spec.primary_folds])
         else:
             variance = None
         conditions[spec.condition] = {
             "label": spec.label,
             "role": spec.role,
+            "primary_folds": list(spec.primary_folds),
             "dbicc": dbicc,
             "variance": variance,
             "fold_dbicc": fold_dbicc,
             "fold_variance": fold_reml,
             "inputs": provenance[spec.condition],
+            "fold_sensitivity": (
+                {
+                    "definition": "all released folds evaluated separately",
+                    "dbicc": aggregate_fold_results(fold_dbicc),
+                    "variance": aggregate_trace_results(fold_reml) if fold_reml else None,
+                }
+                if len(fold_dbicc) > 1 else None
+            ),
         }
 
     contrasts = {
         "anatcl_minus_matched_simclr": paired_bootstrap_contrast(
             conditions["anatcl"]["dbicc"],
             conditions["matched_simclr"]["dbicc"],
-            label="AnatCL minus matched SimCLR",
+            label="AnatCL fold 0 minus AnatCL-SimCLR fold 0",
+        ),
+        "anatcl_minus_matched_simclr_all_folds": paired_bootstrap_contrast(
+            conditions["anatcl"]["fold_sensitivity"]["dbicc"],
+            conditions["matched_simclr"]["fold_sensitivity"]["dbicc"],
+            label="AnatCL minus AnatCL-SimCLR: five matched folds sensitivity",
         ),
         "combat_minus_raw_freesurfer": paired_bootstrap_contrast(
             conditions["freesurfer_combat"]["dbicc"],

@@ -3,7 +3,7 @@ participant_id,Original public ON-Harmony study identifier.
 session_id,Original BIDS session identifier with ses- prefix.
 scanner,Scanner code used in the study analyses.
 primary_acquisition,True for the 120 first acquisitions used in primary analyses; all 165 are included.
-primary_run,False for AnatCL fold0 seeds1-2 initialisation sensitivity runs.
+primary_run,AnatCL and AnatCL-SimCLR use fold0 in primary analyses; AnatCL fine-tuning uses seeds0-2 of fold0. Other folds are sensitivity runs. Predictions are not ensembled.
 emb_*,"Representation coordinates, not aligned across models or folds; FreeSurfer uses 201 morphometric coordinates."
 age_pred,"Predicted age in years, not clipped; no true age or prediction errors are included."
 model/variant/arm/run/seed/fold,Model and retained-run identity; embeddings and predictions are never averaged across runs.

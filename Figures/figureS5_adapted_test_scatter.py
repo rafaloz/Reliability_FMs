@@ -20,7 +20,7 @@ import numpy as np
 
 
 SCRIPT_PATH = Path(__file__).resolve()
-PROJECT_ROOT = SCRIPT_PATH.parents[1]
+PROJECT_ROOT = next(parent for parent in SCRIPT_PATH.parents if (parent / 'Analyses').is_dir())
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -167,6 +167,7 @@ def load_conditions(
                     "run": run.run,
                     "seed": run.seed,
                     "fold": run.fold,
+                    "displayed": run.seed == 0 and run.fold in (None, 0),
                     "predictions": str(predictions_path.resolve()),
                     "predictions_sha256": provenance["predictions_sha256"],
                     "metrics": str(metrics_path.resolve()),
@@ -174,13 +175,22 @@ def load_conditions(
                     "checkpoint_sha256": provenance["checkpoint_sha256"],
                 }
             )
+        display_indices = [
+            index for index, run in enumerate(spec.primary_runs)
+            if run.seed == 0 and run.fold in (None, 0)
+        ]
+        if len(display_indices) != 1:
+            raise ValueError(f"Expected exactly one seed0 display run for {spec.label}")
+        display_index = display_indices[0]
+        display_run = spec.primary_runs[display_index]
         conditions.append(
             {
                 "condition": spec.condition,
                 "label": spec.label,
-                "frames": frames,
-                "metrics": metrics,
-                "run_definition": spec.primary_definition,
+                "frames": [frames[display_index]],
+                "metrics": [metrics[display_index]],
+                "display_run": display_run.run,
+                "run_definition": "seed0, AnatCL fold0" if spec.condition == "anatcl" else "seed0",
             }
         )
     if reference_identity is None or len(reference_identity) != EXPECTED_INTERNAL_TEST_ROWS:
@@ -223,9 +233,9 @@ def render(conditions: list[dict], output_dir: Path, dpi: int) -> list[Path]:
                 axis.scatter(
                     subset["age_true"],
                     subset["age_pred"],
-                    s=12,
+                    s=16,
                     c=DATASET_COLORS[dataset],
-                    alpha=0.25,
+                    alpha=0.55,
                     edgecolors="none",
                     rasterized=False,
                     zorder=2,
@@ -341,12 +351,14 @@ def main() -> None:
     atomic_json(
         manifest_path,
         {
-            "figure": "Supplementary Figure S5: adapted internal-test predictions",
+            "figure": "Supplementary Figure S4: adapted internal-test predictions",
             "cohort": {"split": "internal_test", "subjects": 140},
             "display": (
-                "one point per locked subject-run prediction; metrics averaged across "
-                "runs; predictions not ensembled"
+                "one point per participant; seed0 for every model, AnatCL fold0; "
+                "metrics and CIs use the displayed run"
             ),
+            "displayed_runs": {c["condition"]: c["display_run"] for c in conditions},
+            "displayed_accuracy": {c["condition"]: c["metrics"] for c in conditions},
             "global_adapted_audit": str(adapted_audit),
             "global_adapted_audit_sha256": sha256_file(adapted_audit),
             "global_audit_status": global_audit["status"],

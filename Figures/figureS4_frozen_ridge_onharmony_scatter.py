@@ -21,7 +21,7 @@ import pandas as pd
 
 
 SCRIPT_PATH = Path(__file__).resolve()
-PROJECT_ROOT = SCRIPT_PATH.parents[1]
+PROJECT_ROOT = next(parent for parent in SCRIPT_PATH.parents if (parent / 'Analyses').is_dir())
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -243,6 +243,7 @@ def load_conditions(
                 {
                     "model": spec.label,
                     "variant": variant,
+                    "displayed": variant == ("AnatCL/fold0" if spec.condition == "anatcl" else spec.variants[0]),
                     "predictions": str(predictions_path.resolve()),
                     "predictions_sha256": provenance["predictions_sha256"],
                     "audit": str(audit_path.resolve()),
@@ -260,18 +261,17 @@ def load_conditions(
             condition_results["cross_scanner_absolute_difference"],
             label=f"{spec.label} scanner difference",
         )
+        display_variant = "AnatCL/fold0" if spec.condition == "anatcl" else spec.variants[0]
+        display_index = spec.variants.index(display_variant)
+        display_frame = frames[display_index]
         conditions.append(
             {
                 "condition": spec.condition,
                 "label": spec.label,
-                "frames": frames,
+                "frames": [display_frame],
+                "display_variant": display_variant,
                 "accuracy": [
-                    regression_metrics(frame["age_true"], frame["age_pred"])
-                    for frame in frames
-                ],
-                "dbicc": condition_results["prediction_dbicc"],
-                "scanner_difference": condition_results[
-                    "cross_scanner_absolute_difference"
+                    regression_metrics(display_frame["age_true"], display_frame["age_pred"])
                 ],
             }
         )
@@ -407,7 +407,7 @@ def main() -> None:
     atomic_json(
         manifest_path,
         {
-            "figure": "Supplementary Figure S4: frozen-Ridge ON-Harmony predictions",
+            "figure": "Supplementary Figure S3: frozen-Ridge ON-Harmony predictions",
             "cohort": {
                 "source_acquisitions": 165,
                 "primary_acquisitions": 120,
@@ -416,10 +416,11 @@ def main() -> None:
                 "participant_scanner_cells": 120,
             },
             "display": (
-                "one acquisition 001 point per participant-scanner cell and run; "
-                "chronological age joined after label-blind inference; metrics "
-                "calculated per run and then averaged; predictions not ensembled"
+                "one first-acquisition point per participant-scanner cell; "
+                "one run per model, AnatCL fold0; chronological age joined after "
+                "label-blind inference; metrics and CIs use the displayed run"
             ),
+            "displayed_runs": {c["condition"]: c["display_variant"] for c in conditions},
             "participants": str(participants_path),
             "participants_sha256": sha256_file(participants_path),
             "figure3_results": str(results_path),

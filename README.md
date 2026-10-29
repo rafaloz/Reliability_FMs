@@ -38,6 +38,11 @@ cells (20 participants, six scanners each). Repeats are **not averaged**.
 1. Generate/audit model inputs and frozen embeddings.
 2. Fit standardizers and Ridge with train; select alpha with validation.
 3. Select adaptation LR with seed 0 and validation; evaluate retained runs.
+
+Primary analyses use one pretrained checkpoint per model. AnatCL uses fold 0,
+with three fine-tuning seeds as for the other models. Its remaining pretrained
+folds are retained for sensitivity analyses. The AnatCL-SimCLR primary contrast
+uses fold 0 of both encoders; all five paired folds are also reported separately.
    ON-Harmony must not influence training or selection.
 4. Run `Analyses/figure2_reliability.py`, `figure3_brain_age.py`, then
    `figure4_adaptation.py` once the required artifacts are available.

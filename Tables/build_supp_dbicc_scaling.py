@@ -148,12 +148,13 @@ def build(input_root: Path, results_path: Path, output_dir: Path) -> pd.DataFram
                 "condition": spec.condition,
                 "model": "AnatCL--SimCLR" if spec.condition == "matched_simclr" else spec.label,
                 "fold": fold,
+                "primary": fold in spec.primary_folds,
                 "dimensions": spec.expected_dimensions,
                 **scores,
             })
             sources.append({"path": str(path.resolve()), "sha256": record["analysis_input_sha256"]})
     folds = pd.DataFrame(rows)
-    summary = summarise(folds)
+    summary = summarise(folds.loc[folds["primary"]])
     for row in summary.itertuples():
         expected = results["conditions"][row.condition]["dbicc"]["estimate"]
         if not np.isclose(row.native_dbicc, expected, rtol=0, atol=1e-10):
@@ -175,7 +176,7 @@ def build(input_root: Path, results_path: Path, output_dir: Path) -> pd.DataFram
         "primary_unchanged": True,
         "cohort": {"participants": 20, "acquisitions": 120, "scanners": 8, "selection": "first acquisition per cell"},
         "standardisation": "StandardScaler fitted separately per representation/fold on the 120 selected acquisitions; population SD; constant features set to zero",
-        "aggregation": "Mean of five independently calculated fold dbICCs for AnatCL and AnatCL-SimCLR; one run for others; no embedding averaging",
+        "aggregation": "Selected primary checkpoint per representation; all folds retained in the detailed CSV; no embedding averaging",
         "rank": "Descending point estimate across nine representations; exact ties share the minimum rank",
         "figure2_results": {"path": str(results_path.resolve()), "sha256": results_sha},
         "inputs": sources,

@@ -170,9 +170,11 @@ python FineTuning/AnatCL/finetune.py select \
 ```
 
 Read `SELECTED_LR.json`, then run only that LR for fold 0 seeds 1 and 2 and
-for folds 1-4 seed 0. The primary adapted summary gives equal weight to folds
-0-4 at seed 0. Fold 0 seeds 0/1/2 provide a separate initialization
-sensitivity; the two sources of variability must not be pooled.
+for folds 1-4 seed 0. The primary adapted summary averages fold 0 seeds
+0/1/2, matching the three-seed protocol of the other models. Folds 0-4 at
+seed 0 provide a separate pretrained-checkpoint sensitivity analysis.
+Primary frozen results use the fold-0 Ridge model. The two sources of
+variability must not be pooled into seven equally weighted runs.
 Every adapted internal-test evaluation, including folds 1-4, must pass
 `--selection-dir Results/brain_age/adapted/AnatCL/fold0_lr_selection`; the
 result records whether the fold-0 LR was transferred across folds.

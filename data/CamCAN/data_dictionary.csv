@@ -7,7 +7,7 @@ arm,"embedding, frozen Ridge prediction, or adapted prediction."
 run,Representation or retained training-run identifier.
 seed,Training seed; blank for frozen embeddings and Ridge.
 fold,AnatCL pretrained fold 0-4; otherwise blank.
-primary,False marks AnatCL fold0 seeds1-2 sensitivity runs; no predictions are ensembled.
+primary,AnatCL and AnatCL-SimCLR use fold0 in primary analyses; AnatCL fine-tuning uses seeds0-2 of fold0. Other folds are sensitivity runs. Predictions are not ensembled.
 emb_*,Frozen encoder feature values; axes are not interchangeable across models or folds.
 age_pred,"Predicted age in years, inverse-transformed with training statistics; not clipped."
 file,Relative path within this deposit.

@@ -109,7 +109,7 @@ MODEL_SPECS = (
         "anatcl",
         "AnatCL",
         "anatcl",
-        tuple(f"AnatCL/fold{fold}" for fold in range(5)),
+        ("AnatCL/fold0",),
         "AnatCL",
     ),
     ModelSpec(

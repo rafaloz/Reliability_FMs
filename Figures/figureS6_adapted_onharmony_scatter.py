@@ -21,7 +21,7 @@ import pandas as pd
 
 
 SCRIPT_PATH = Path(__file__).resolve()
-PROJECT_ROOT = SCRIPT_PATH.parents[1]
+PROJECT_ROOT = next(parent for parent in SCRIPT_PATH.parents if (parent / 'Analyses').is_dir())
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -257,6 +257,7 @@ def load_conditions(
                     "run": run.run,
                     "seed": run.seed,
                     "fold": run.fold,
+                    "displayed": run.seed == 0 and run.fold in (None, 0),
                     "predictions": str(predictions_path.resolve()),
                     "predictions_sha256": provenance["predictions_sha256"],
                     "audit": str(audit_path.resolve()),
@@ -272,17 +273,24 @@ def load_conditions(
             adapted_metrics["scanner_difference"],
             label=f"{spec.label} scanner difference",
         )
+        display_indices = [
+            index for index, run in enumerate(spec.primary_runs)
+            if run.seed == 0 and run.fold in (None, 0)
+        ]
+        if len(display_indices) != 1:
+            raise ValueError(f"Expected exactly one seed0 display run for {spec.label}")
+        display_index = display_indices[0]
+        display_run = spec.primary_runs[display_index]
+        display_frame = frames[display_index]
         conditions.append(
             {
                 "condition": spec.condition,
                 "label": spec.label,
-                "frames": frames,
+                "frames": [display_frame],
+                "display_run": display_run.run,
                 "accuracy": [
-                    regression_metrics(frame["age_true"], frame["age_pred"])
-                    for frame in frames
+                    regression_metrics(display_frame["age_true"], display_frame["age_pred"])
                 ],
-                "dbicc": adapted_metrics["dbicc"],
-                "scanner_difference": adapted_metrics["scanner_difference"],
             }
         )
 
@@ -311,8 +319,8 @@ def render(conditions: list[dict], output_dir: Path, dpi: int) -> list[Path]:
         axes.append(figure.add_subplot(grid[row, column], sharex=shared, sharey=shared))
 
     for index, (axis, condition) in enumerate(zip(axes, conditions)):
-        point_alpha = 0.16 if len(condition["frames"]) == 3 else 0.12
-        point_size = 10 if len(condition["frames"]) == 3 else 8
+        point_alpha = 0.48
+        point_size = 14
         for frame in condition["frames"]:
             for scanner in SCANNER_ORDER:
                 subset = frame.loc[frame["scanner"].astype(str) == scanner]
@@ -411,7 +419,7 @@ def main() -> None:
     atomic_json(
         manifest_path,
         {
-            "figure": "Supplementary Figure S6: adapted ON-Harmony predictions",
+            "figure": "Supplementary Figure S5: adapted ON-Harmony predictions",
             "cohort": {
                 "source_acquisitions": 165,
                 "primary_acquisitions": 120,
@@ -420,10 +428,11 @@ def main() -> None:
                 "participant_scanner_cells": 120,
             },
             "display": (
-                "one acquisition 001 point per participant-scanner cell and run; "
-                "chronological age joined after label-blind inference; metrics "
-                "calculated per run and then averaged; predictions not ensembled"
+                "one first-acquisition point per participant-scanner cell; "
+                "seed0 for every model, AnatCL fold0; chronological age joined "
+                "after label-blind inference; metrics and CIs use the displayed run"
             ),
+            "displayed_runs": {c["condition"]: c["display_run"] for c in conditions},
             "participants": str(participants_path),
             "participants_sha256": sha256_file(participants_path),
             "figure4_results": str(results_path),

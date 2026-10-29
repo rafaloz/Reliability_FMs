@@ -160,14 +160,22 @@ def representation_analysis(data_root: Path, output: Path, samples: np.ndarray, 
                     condition=f"{spec.condition}__fold{index}", workers=args.workers, rscript=args.rscript))
         conditions[spec.condition] = {
             "label": spec.label, "role": spec.role,
-            "dbicc": embedding.aggregate_fold_results(fold_dbicc), "fold_dbicc": fold_dbicc,
-            "variance": embedding.aggregate_trace_results(fold_variance) if fold_variance else None,
+            "primary_folds": list(spec.primary_folds),
+            "dbicc": embedding.aggregate_fold_results([fold_dbicc[i] for i in spec.primary_folds]), "fold_dbicc": fold_dbicc,
+            "variance": embedding.aggregate_trace_results([fold_variance[i] for i in spec.primary_folds]) if fold_variance else None,
             "fold_variance": fold_variance,
+            "fold_sensitivity": {
+                "dbicc": embedding.aggregate_fold_results(fold_dbicc),
+                "variance": embedding.aggregate_trace_results(fold_variance) if fold_variance else None,
+            } if len(fold_dbicc) > 1 else None,
         }
         print(f"Embedding: {spec.label}", flush=True)
     return {"schema_version": 1, "conditions": conditions, "contrasts": {
         "anatcl_minus_matched_simclr": embedding.paired_bootstrap_contrast(
-            conditions["anatcl"]["dbicc"], conditions["matched_simclr"]["dbicc"], label="AnatCL minus AnatCL-SimCLR")}}
+            conditions["anatcl"]["dbicc"], conditions["matched_simclr"]["dbicc"], label="AnatCL fold0 minus AnatCL-SimCLR fold0"),
+        "anatcl_minus_matched_simclr_all_folds": embedding.paired_bootstrap_contrast(
+            conditions["anatcl"]["fold_sensitivity"]["dbicc"], conditions["matched_simclr"]["fold_sensitivity"]["dbicc"],
+            label="AnatCL minus AnatCL-SimCLR: five matched folds sensitivity")}}
 
 
 def prediction_analysis(data_root: Path, acquisitions: pd.DataFrame, cohort: pd.DataFrame,
@@ -184,13 +192,14 @@ def prediction_analysis(data_root: Path, acquisitions: pd.DataFrame, cohort: pd.
     conditions_frozen, conditions_adapted, scanner_cells = {}, {}, {}
     for spec in adaptation.MODEL_SPECS:
         cache, runs, primary = {}, {}, []
+        primary_variants = {run.frozen_variant for run in spec.primary_runs}
         for run in spec.runs:
             variant = run.frozen_variant
             if variant not in cache:
                 frozen_on = select_run(onharmony, model=spec.label, variant=variant, arm="frozen",
-                                       run=f"ridge_{variant}", primary=True)
+                                       run=f"ridge_{variant}", primary=variant in primary_variants)
                 frozen_test = select_run(internal, model=spec.model_dir, variant=variant, arm="frozen",
-                                         run=f"ridge_{variant}", primary=True)
+                                         run=f"ridge_{variant}", primary=variant in primary_variants)
                 require(set(zip(frozen_test.dataset, frozen_test.participant_id)) == expected_test,
                         f"Wrong frozen test identities: {spec.label}/{variant}")
                 metrics, cells = prediction_metrics(onharmony_frame(frozen_on, acquisitions), samples["onharmony"])
@@ -238,7 +247,9 @@ def prediction_analysis(data_root: Path, acquisitions: pd.DataFrame, cohort: pd.
             "prediction_dbicc": frozen_aggregate["dbicc"], "dbicc_change": change,
             "cross_scanner_absolute_difference": frozen_aggregate["scanner_difference"],
         }
-        scanner_cells[f"frozen:{spec.condition}"] = [pair["cells"] for pair in cache.values()]
+        scanner_cells[f"frozen:{spec.condition}"] = [
+            pair["cells"] for variant, pair in cache.items() if variant in primary_variants
+        ]
         scanner_cells[f"adapted:{spec.condition}"] = [record["cells"] for record in primary]
     participants = acquisitions[["participant_id", "phase"]].drop_duplicates()
     scanner_samples = frozen.stratified_phase_bootstrap(participants, len(samples["onharmony"]), SEEDS["scanner_effects"])
@@ -282,7 +293,7 @@ def prediction_analysis(data_root: Path, acquisitions: pd.DataFrame, cohort: pd.
 
 
 def source_hashes(data_root: Path, ages: Path | None) -> dict:
-    paths = [*data_root.rglob("*.csv"), data_root / "selections.json", Path(__file__).resolve(),
+    paths = [*data_root.rglob("*.csv"), data_root / "selections.json", data_root / "PRIMARY_PROTOCOL.json", Path(__file__).resolve(),
              Path(embedding.__file__), Path(frozen.__file__), Path(adaptation.__file__),
              ROOT / "FineTuning/shared/metrics.py", ROOT / "tools/prepare_reproduction_selections.py",
              embedding.R_SCRIPT]

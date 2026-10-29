@@ -1,0 +1,76 @@
+{
+  "version": 2,
+  "date": "2026-10-29",
+  "primary_checkpoint": "fold0 for AnatCL and AnatCL-SimCLR; one checkpoint per other FM",
+  "adapted_primary": "seeds0,1,2 for each of seven models",
+  "sensitivity": "five pretrained folds at seed0; five matched embedding-fold pairs",
+  "aggregation": "average metrics within the same participant bootstrap, never predictions",
+  "revision_reason": "Uniform checkpoint and training-seed evaluation during manuscript revision.",
+  "historical_source_csv_hashes": "source_csv_sha256 retains the original pre-compaction CSV identity; current classifications and file hashes are in the compact CSVs and inventories.",
+  "scientific_values_unchanged": true,
+  "files": [
+    {
+      "file": "data/CamCAN/embeddings/AnatCL.csv",
+      "flags_changed": 2600,
+      "sha_before": "61861cde50243798847d8fffb0db234e111dad8a09aae4383a62068767e7b0f1",
+      "sha_after": "0e4e2716a1a04a4b188c471b0962cc1181363fd6bda31a643ffca0edf4b6bf80",
+      "scientific_values_unchanged": true
+    },
+    {
+      "file": "data/CamCAN/predictions.csv",
+      "flags_changed": 1290,
+      "sha_before": "de3ee66344345de2a0f32b3b68bfa0190960861018debc2a5531af80e57f77f6",
+      "sha_after": "7c37ca730d5c4036eb1469e4a34afcb621f67a910e9c71fbd48ca2ee6a7a51b6",
+      "scientific_values_unchanged": true
+    },
+    {
+      "file": "data/NeuroCog/predictions.csv",
+      "flags_changed": 300,
+      "sha_before": "1c4018667dfc925ebe1f9949c73a15f3716425d6af4edc145839bdebcad5bdf5",
+      "sha_after": "dec878d77deabc3f99328a570c3966b956fe6e47faa30b69ec28aa79b9b08b26",
+      "scientific_values_unchanged": true
+    },
+    {
+      "file": "data/WAND/predictions.csv",
+      "flags_changed": 170,
+      "sha_before": "d7e2c7878bbff8428885f403a7ded23944280c5db83e8cd1de8e3dadf85963a1",
+      "sha_after": "1c214bb138e44a3d5c9b6c673da8d492cbd6d95eb1f4f5ac55980a204ca86b03",
+      "scientific_values_unchanged": true
+    },
+    {
+      "file": "data/NIMH-RV/predictions.csv",
+      "flags_changed": 140,
+      "sha_before": "73c67dd23830a2a175795e7e0a26b592f993c86467e976f69fcafa39f629411f",
+      "sha_after": "10675aca1ffc9c6017fbaaee90ec5fceac24296cbcf703876d072703f08e7e4d",
+      "scientific_values_unchanged": true
+    },
+    {
+      "file": "data/MR-ART/predictions.csv",
+      "flags_changed": 150,
+      "sha_before": "ca49ac9802955e8591c2fa0cdd8810a22472a6b13b660c9770b0fb6a5bfab626",
+      "sha_after": "71040228442a7977d9516688b13add3daa7d0f4f3d35cf6dbe1f5f1a7c353ee5",
+      "scientific_values_unchanged": true
+    },
+    {
+      "file": "data/ON-Harmony/embeddings/anatcl.csv",
+      "flags_changed": 660,
+      "sha_before": "693f824d9ad608d425304b7a5fced9156fd98361cb6ae6a1d8da031378ce942c",
+      "sha_after": "e75f420417ef16a04b02665e2d2d0c6db1f5e7ecc80b6f21b439a2480e3f1dea",
+      "scientific_values_unchanged": true
+    },
+    {
+      "file": "data/ON-Harmony/embeddings/matched_simclr.csv",
+      "flags_changed": 660,
+      "sha_before": "521ec86585a9cb89bf5067e2bf4650422b7f7f285eb0c9af2486efb2e64aa0c2",
+      "sha_after": "2d8e49eb88d1f39f5e5651b7b944442ee5aa7794e646eca045e0676fcbdd41ea",
+      "scientific_values_unchanged": true
+    },
+    {
+      "file": "data/ON-Harmony/predictions.csv",
+      "flags_changed": 1650,
+      "sha_before": "4129072265c9f56c495dcbd90092562a5a3f8252674ed27222c2f53feaa0ce07",
+      "sha_after": "796589a73e13ba3cfd70e43c120b0fc48291c6feef94aa5cd0511b4cf9f25399",
+      "scientific_values_unchanged": true
+    }
+  ]
+}

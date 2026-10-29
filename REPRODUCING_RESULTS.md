@@ -93,8 +93,11 @@ source.
 
 The primary calculation uses 1,000 participant-level bootstrap replicates
 with the original analysis seeds. Each seed/fold is evaluated separately;
-metrics, not predictions, are averaged. The two additional AnatCL fold-0
-seeds remain separate sensitivity runs. The 120 primary ON-Harmony scans are
+metrics, not predictions, are averaged. AnatCL uses fold 0 for the primary
+analysis, with seeds 0-2 for fine-tuning, just like the other models. The
+other four pretrained folds at seed 0 form a separate sensitivity analysis.
+The AnatCL-SimCLR primary contrast also uses fold 0 of both encoders;
+the five-fold paired contrast is retained as sensitivity. The 120 primary ON-Harmony scans are
 selected before computing cross-scanner metrics.
 
 With ages and REML included, the JSONs can be passed directly to the existing

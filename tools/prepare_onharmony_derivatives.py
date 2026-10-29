@@ -85,11 +85,12 @@ def export(args):
                     raise ValueError(f"Source changed: {source}")
                 variant = f"fold{fold}" if len(paths) > 1 else "canonical"
                 save(frame, Path("embeddings") / spec.condition / variant / "onharmony.csv",
-                     dict(model=spec.label, variant=variant, arm="embedding", run=variant, primary_run=True),
+                     dict(model=spec.label, variant=variant, arm="embedding", run=variant, primary_run=fold in spec.primary_folds),
                      provenance["data_sha256"], provenance["sha256"])
         brain_age = args.project / "Results/brain_age"
         for spec in FROZEN_MODELS:
-            for variant_path in spec.variants:
+            variants = tuple(f"AnatCL/fold{i}" for i in range(5)) if spec.condition == "anatcl" else spec.variants
+            for variant_path in variants:
                 model, variant = variant_path.split("/")
                 root = brain_age / "onharmony" / ("frozen_bfloat16_v3" if model == "AnatCL" else "frozen") / variant_path
                 path, audit = root / "predictions.tsv", root / "prediction_audit.json"
@@ -100,7 +101,7 @@ def export(args):
                 if sha256_file(path) != source_hash or sha256_file(audit) != audit_hash:
                     raise ValueError(f"Source changed: {path}")
                 save(frame, Path("predictions") / model / f"ridge_{variant}" / "onharmony.csv",
-                     dict(model=spec.label, variant=variant, arm="frozen", run=f"ridge_{variant}", primary_run=True), source_hash, audit_hash)
+                     dict(model=spec.label, variant=variant, arm="frozen", run=f"ridge_{variant}", primary_run=variant_path in spec.variants), source_hash, audit_hash)
         for spec in ADAPTED_MODELS:
             for run in spec.runs:
                 root = brain_age / "onharmony/adapted" / spec.model_dir / run.run
@@ -124,7 +125,7 @@ def export(args):
             "session_id": "Original BIDS session identifier with ses- prefix.",
             "scanner": "Scanner code used in the study analyses.",
             "primary_acquisition": "True for the 120 first acquisitions used in primary analyses; all 165 are included.",
-            "primary_run": "False for AnatCL fold0 seeds1-2 initialisation sensitivity runs.",
+            "primary_run": "AnatCL and AnatCL-SimCLR use fold0 for primary analyses; AnatCL fine-tuning uses all three fold0 seeds. Other folds are sensitivity runs.",
             "emb_*": "Representation coordinates, not aligned across models or folds; FreeSurfer uses 201 morphometric coordinates.",
             "age_pred": "Predicted age in years, not clipped; no true age or prediction errors are included.",
             "model/variant/arm/run/seed/fold": "Model and retained-run identity; embeddings and predictions are never averaged across runs.",

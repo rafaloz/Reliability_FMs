@@ -73,7 +73,7 @@ IMPLEMENTATION_ROWS = [
         "model": "AnatCL",
         "evaluated_input": "CAT12/Dartel modulated GM; center crop 121x128x121",
         "checkpoint": "Five corrected anatcl-g3 CV folds",
-        "canonical_readout": "Backbone global average pooling; five folds reported separately and aggregated",
+        "canonical_readout": "Backbone global average pooling; fold0 primary, other folds retained for sensitivity",
         "sensitivity": "Input normalization and registration checks",
         "match": "Matches corrected release",
     },
