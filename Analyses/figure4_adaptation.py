@@ -12,9 +12,9 @@ ON-Harmony participants. Positive gains always indicate improvement:
 
 Metrics are calculated separately for every retained training run and only then
 averaged inside each shared participant bootstrap. Predictions are never
-averaged into an ensemble. Six model families use the three retained seeds.
-AnatCL's primary estimator uses folds 0-4 at seed 0; fold-0 seeds 0-2 remain a
-separate initialization-sensitivity analysis.
+averaged into an ensemble. All seven model families use the three retained seeds.
+AnatCL's primary estimator uses fold 0. Folds 0-4 at seed 0 form a separate
+pretrained-checkpoint sensitivity analysis.
 """
 
 from __future__ import annotations
