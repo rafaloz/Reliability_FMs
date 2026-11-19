@@ -42,11 +42,6 @@ cells (20 participants, six scanners each). Repeats are **not averaged**.
    inputs are available. ON-Harmony is not used for training or selection.
 5. Generate figures and tables from the analysis outputs; rendering does not train models.
 
-Primary analyses use one pretrained checkpoint per model. AnatCL uses fold 0,
-with three fine-tuning seeds as for the other models. Its remaining pretrained
-folds are retained for sensitivity analyses. The AnatCL-SimCLR primary contrast
-uses fold 0 of both encoders; all five paired folds are also reported separately.
-
 ## Result data
 
 The deposit contains 22 data CSVs, plus inventories and dictionaries:
@@ -67,15 +62,9 @@ participant ID. Cross-scanner dbICC and mean absolute pairwise differences
 can be calculated without ages. Seeds and folds must be analysed separately
 before averaging their metrics; predictions are not ensembled.
 
-Inventories map each original export to its compact file; `rows` refers to
-that original export, not the whole compact file.
-`Analyses/reproduce_published.py` connects these CSVs directly to the existing
-statistical functions. See [`REPRODUCING_RESULTS.md`](REPRODUCING_RESULTS.md)
-for cross-scanner calculations without ages, optional local age input for
-internal-test accuracy, REML and figure-generation commands. The original
-analysis entry points remain available for the audited study bundles.
-`tools/compact_derivatives.py` creates the compact layout without changing
-retained numeric values.
+The published CSVs can be used to reproduce the cross-scanner results.
+Reproducing internal-test accuracy also requires chronological ages from the
+original datasets. See [Reproducing the results](REPRODUCING_RESULTS.md) for commands.
 
 ## Environment
 
