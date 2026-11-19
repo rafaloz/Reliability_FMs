@@ -47,13 +47,6 @@ with three fine-tuning seeds as for the other models. Its remaining pretrained
 folds are retained for sensitivity analyses. The AnatCL-SimCLR primary contrast
 uses fold 0 of both encoders; all five paired folds are also reported separately.
 
-Figure 2 uses native squared-distance dbICC and crossed REML variance components.
-Figure 3 shows t-SNE projections of the ON-Harmony representations. Figure 4
-compares frozen and fine-tuned brain-age predictions: internal-test MAE,
-cross-scanner dbICC and mean absolute pairwise difference in years. Table 4 reports
-paired gains with global BH correction across seven models and three endpoints.
-Metrics, not predictions, are averaged across retained runs.
-
 ## Result data
 
 The deposit contains 22 data CSVs, plus inventories and dictionaries:
