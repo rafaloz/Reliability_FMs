@@ -14,8 +14,8 @@ A Travelling-Heads Study**.
 - `Analyses/`: current representation, prediction and adaptation analyses.
 - `Figures/`: main and supplementary
   figure generators; analysis artifacts must be generated separately.
-- `Tables/`: model descriptions and dbICC scaling
-  sensitivity. The manuscript's comparative results table is not generated here.
+- `Tables/`: generators for the model descriptions, sensitivity analyses and
+  main comparison of frozen and fine-tuned predictions (Table 4).
 - `Supplementary/`: AnatCL-SimCLR extractor and the BrainSegFounder selection
   migration helper.
 
@@ -38,26 +38,21 @@ cells (20 participants, six scanners each). Repeats are **not averaged**.
 1. Generate/audit model inputs and frozen embeddings.
 2. Fit standardizers and Ridge with train; select alpha with validation.
 3. Select adaptation LR with seed 0 and validation; evaluate retained runs.
+4. Run the embedding, frozen prediction and adaptation analyses once the required
+   inputs are available. ON-Harmony is not used for training or selection.
+5. Generate figures and tables from the analysis outputs; rendering does not train models.
 
 Primary analyses use one pretrained checkpoint per model. AnatCL uses fold 0,
 with three fine-tuning seeds as for the other models. Its remaining pretrained
 folds are retained for sensitivity analyses. The AnatCL-SimCLR primary contrast
 uses fold 0 of both encoders; all five paired folds are also reported separately.
-   ON-Harmony must not influence training or selection.
-4. Run `Analyses/figure2_reliability.py`, `figure3_brain_age.py`, then
-   `figure4_adaptation.py` once the required artifacts are available.
-5. Run corresponding figure generators; rendering does not train models.
 
 Figure 2 uses native squared-distance dbICC and crossed REML variance components.
-Figure 3 separates test MAE, predicted-age dbICC and absolute cross-scanner change.
-Figure 4 uses paired gains and global BH correction over seven models and three
-endpoints. Metrics are averaged across retained runs, not predictions.
-
-In both prediction figures, scanner shifts are adjusted for participant and
-reported relative to NOT1 (Philips Achieva), which was used in both ON-Harmony
-phases. Positive values mean older predictions than NOT1, not overestimation
-relative to chronological age. NOT1 is zero by definition, not a gold standard.
-Scanner contrasts are recalculated within every participant-bootstrap replicate.
+Figure 3 shows t-SNE projections of the ON-Harmony representations. Figure 4
+compares frozen and fine-tuned brain-age predictions: internal-test MAE,
+cross-scanner dbICC and mean absolute pairwise difference in years. Table 4 reports
+paired gains with global BH correction across seven models and three endpoints.
+Metrics, not predictions, are averaged across retained runs.
 
 ## Result data
 

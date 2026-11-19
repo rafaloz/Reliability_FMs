@@ -15,7 +15,6 @@ Path(os.environ["MPLCONFIGDIR"]).mkdir(parents=True, exist_ok=True)
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
 import numpy as np
 
 
@@ -33,36 +32,6 @@ DISPLAY_ORDER = (
     "neurovfm",
     "curia2",
     "brainiac",
-)
-
-SCANNER_ORDER = (
-    "750",
-    "Prem21",
-    "Prem48",
-    "Ach",
-    "Ing",
-    "Pri32",
-    "Pri64",
-    "Trio",
-)
-
-SCANNER_LABELS = (
-    "MR750",
-    "Premier 21",
-    "Premier 48",
-    "Achieva",
-    "Ingenia",
-    "Prisma 32",
-    "Prisma 64",
-    "Trio",
-)
-SCANNER_REFERENCE = "Ach"
-SCANNER_COLOR_LIMIT_YEARS = 16.0
-
-VENDOR_GROUPS = (
-    (0, 2, "GE Healthcare"),
-    (3, 4, "Philips"),
-    (5, 7, "Siemens"),
 )
 
 COLORS = {
@@ -144,8 +113,6 @@ def validate_payload(payload: dict) -> dict:
             "Figure 3 conditions differ from the seven prespecified models: "
             f"{sorted(conditions)}"
         )
-    if tuple(payload.get("scanner_order", ())) != SCANNER_ORDER:
-        raise ValueError("Figure 3 scanner order is not the locked display order")
     if payload.get("cohorts", {}).get("internal_test", {}).get("subjects") != 140:
         raise ValueError("Figure 3 internal-test cohort is not locked to 140 subjects")
     onharmony = payload.get("cohorts", {}).get("onharmony", {})
@@ -169,29 +136,6 @@ def validate_payload(payload: dict) -> dict:
             record.get("cross_scanner_absolute_difference", {}),
             f"{condition} absolute scanner difference",
         )
-        scanner_record = record.get("scanner_effects", {})
-        if scanner_record.get("reference_scanner") != SCANNER_REFERENCE:
-            raise ValueError(f"Scanner effects are not relative to NOT1 for {condition}")
-        effects = scanner_record.get("effects", [])
-        if [effect.get("scanner") for effect in effects] != list(SCANNER_ORDER):
-            raise ValueError(f"Invalid scanner effects for {condition}")
-        effect_values = np.asarray(
-            [effect.get("effect_years") for effect in effects], dtype=float
-        )
-        if not np.isfinite(effect_values).all():
-            raise ValueError(f"Non-finite scanner effects for {condition}")
-        reference_index = SCANNER_ORDER.index(SCANNER_REFERENCE)
-        if not np.isclose(effect_values[reference_index], 0.0, atol=1e-8):
-            raise ValueError(f"Reference scanner effect is not zero for {condition}")
-        for effect in effects:
-            bootstrap = np.asarray(effect.get("bootstrap_values", []), dtype=float)
-            if bootstrap.shape != (1000,) or not np.isfinite(bootstrap).all():
-                raise ValueError(f"Invalid scanner bootstrap for {condition}")
-            if effect["scanner"] == SCANNER_REFERENCE and not np.allclose(
-                [*bootstrap, effect["ci_lower"], effect["ci_upper"]], 0.0, atol=1e-8
-            ):
-                raise ValueError(f"Reference scanner uncertainty is not zero for {condition}")
-
     analysis_script = Path(payload.get("code", {}).get("analysis_script", ""))
     expected_hash = payload.get("code", {}).get("analysis_script_sha256")
     if not analysis_script.is_file():
@@ -246,61 +190,31 @@ def style_forest_axis(axis: mpl.axes.Axes, count: int) -> None:
         axis.axhline(row, color="#EEF0F2", linewidth=0.55, zorder=0)
 
 
-def add_vendor_groups(axis: mpl.axes.Axes) -> None:
-    transform = axis.get_xaxis_transform()
-    for start, end, label in VENDOR_GROUPS:
-        axis.plot(
-            [start - 0.42, end + 0.42],
-            [1.045, 1.045],
-            transform=transform,
-            color=COLORS["embedding"],
-            linewidth=0.8,
-            clip_on=False,
-        )
-        axis.text(
-            (start + end) / 2,
-            1.065,
-            label,
-            transform=transform,
-            ha="center",
-            va="bottom",
-            color=COLORS["embedding"],
-            fontsize=11.5,
-            clip_on=False,
-        )
-
-
 def render(payload: dict, *, output_dir: Path, dpi: int) -> list[Path]:
     conditions = validate_payload(payload)
     configure_matplotlib()
 
     count = len(DISPLAY_ORDER)
-    y = np.arange(count, dtype=float)
     labels = [conditions[condition]["label"] for condition in DISPLAY_ORDER]
 
-    figure = plt.figure(figsize=(13.6, 7.2), constrained_layout=False)
-    outer = figure.add_gridspec(
-        2,
-        1,
-        height_ratios=(0.62, 0.62),
-        hspace=0.84,
-        left=0.19,
-        right=0.965,
-        bottom=0.105,
-        top=0.87,
+    figure = plt.figure(figsize=(13.6, 4.8), constrained_layout=False)
+    figure.suptitle(
+        "Brain-age prediction from frozen embeddings",
+        x=0.53, y=0.99, fontsize=20, fontweight="bold",
     )
-    top = outer[0].subgridspec(
+    top = figure.add_gridspec(
         1,
         3,
         width_ratios=(1.0, 1.16, 1.0),
         wspace=0.20,
+        left=0.19,
+        right=0.965,
+        bottom=0.14,
+        top=0.69,
     )
-    bottom = outer[1].subgridspec(1, 2, width_ratios=(1.0, 0.028), wspace=0.045)
     axis_mae = figure.add_subplot(top[0])
     axis_icc = figure.add_subplot(top[1], sharey=axis_mae)
     axis_difference = figure.add_subplot(top[2], sharey=axis_mae)
-    axis_heat = figure.add_subplot(bottom[0])
-    axis_colorbar = figure.add_subplot(bottom[1])
 
     for axis in (axis_mae, axis_icc, axis_difference):
         style_forest_axis(axis, count)
@@ -418,7 +332,7 @@ def render(payload: dict, *, output_dir: Path, dpi: int) -> list[Path]:
     figure.legend(
         handles=legend_handles,
         loc="upper center",
-        bbox_to_anchor=(0.53, 1.005),
+        bbox_to_anchor=(0.53, 0.91),
         ncol=2,
         frameon=False,
         handletextpad=0.45,
@@ -431,74 +345,6 @@ def render(payload: dict, *, output_dir: Path, dpi: int) -> list[Path]:
     axis_difference.set_title(
         "c   Cross-scanner differences", loc="left", fontweight="bold"
     )
-
-    effects = np.asarray(
-        [
-            [
-                effect["effect_years"]
-                for effect in conditions[condition]["scanner_effects"]["effects"]
-            ]
-            for condition in DISPLAY_ORDER
-        ],
-        dtype=float,
-    )
-    maximum = SCANNER_COLOR_LIMIT_YEARS
-    if np.max(np.abs(effects)) > maximum:
-        raise ValueError("Frozen scanner effects exceed the shared Figure 3/4 color scale")
-    diverging = LinearSegmentedColormap.from_list(
-        "scanner_shift", (COLORS["turquoise"], "#F7F7F5", COLORS["orange"])
-    )
-    normalization = TwoSlopeNorm(vmin=-maximum, vcenter=0.0, vmax=maximum)
-    image = axis_heat.imshow(
-        effects,
-        aspect="auto",
-        cmap=diverging,
-        norm=normalization,
-        interpolation="nearest",
-    )
-    axis_heat.set_yticks(y, labels)
-    axis_heat.set_xticks(np.arange(len(SCANNER_LABELS)), SCANNER_LABELS)
-    axis_heat.tick_params(axis="y", length=0, pad=7, labelsize=13)
-    axis_heat.tick_params(axis="x", length=0, pad=7, labelsize=11.8)
-    axis_heat.set_xlabel("Scanner (reference: NOT1 / Achieva)")
-    axis_heat.set_title(
-        "d   Participant-adjusted scanner shifts in predicted age",
-        loc="left",
-        fontweight="bold",
-        pad=40,
-    )
-    for boundary in (2.5, 4.5):
-        axis_heat.axvline(boundary, color="white", linewidth=2.4, zorder=3)
-        axis_heat.axvline(boundary, color="#AAB0B5", linewidth=0.65, zorder=4)
-    for boundary in np.arange(count - 1) + 0.5:
-        axis_heat.axhline(boundary, color="white", linewidth=1.0, zorder=3)
-    add_vendor_groups(axis_heat)
-
-    for row in range(effects.shape[0]):
-        for column in range(effects.shape[1]):
-            value = float(effects[row, column])
-            color = "white" if value <= -0.53 * maximum else "#25292D"
-            axis_heat.text(
-                column,
-                row,
-                "ref." if SCANNER_ORDER[column] == SCANNER_REFERENCE else f"{value:+.1f}",
-                ha="center",
-                va="center",
-                fontsize=11.2,
-                color=color,
-                fontweight="bold" if abs(value) >= 0.70 * maximum else "normal",
-                zorder=5,
-            )
-
-    colorbar = figure.colorbar(image, cax=axis_colorbar)
-    colorbar.set_label(
-        "Difference from NOT1 (years)",
-        rotation=270,
-        labelpad=26,
-        fontsize=13.5,
-    )
-    colorbar.outline.set_linewidth(0.7)
-    colorbar.ax.tick_params(labelsize=11.5)
 
     output_dir.mkdir(parents=True, exist_ok=True)
     outputs = [
@@ -536,6 +382,7 @@ def main() -> None:
     payload = json.loads(result_path.read_text(encoding="utf-8"))
     outputs = render(payload, output_dir=output_dir, dpi=args.dpi)
     manifest = {
+        "panels": ["internal_test_accuracy", "cross_scanner_reliability", "cross_scanner_absolute_difference"],
         "figure": "Figure 3: frozen-Ridge brain-age utility and cross-acquisition robustness",
         "analysis": str(result_path),
         "analysis_sha256": sha256_file(result_path),

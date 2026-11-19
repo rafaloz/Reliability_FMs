@@ -15,7 +15,6 @@ Path(os.environ["MPLCONFIGDIR"]).mkdir(parents=True, exist_ok=True)
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
 import numpy as np
 
 
@@ -34,37 +33,6 @@ DISPLAY_ORDER = (
     "curia2",
     "brainiac",
 )
-
-SCANNER_ORDER = (
-    "750",
-    "Prem21",
-    "Prem48",
-    "Ach",
-    "Ing",
-    "Pri32",
-    "Pri64",
-    "Trio",
-)
-
-SCANNER_LABELS = (
-    "MR750",
-    "Premier 21",
-    "Premier 48",
-    "Achieva",
-    "Ingenia",
-    "Prisma 32",
-    "Prisma 64",
-    "Trio",
-)
-SCANNER_REFERENCE = "Ach"
-
-VENDOR_GROUPS = (
-    (0, 2, "GE Healthcare"),
-    (3, 4, "Philips"),
-    (5, 7, "Siemens"),
-)
-
-SCANNER_COLOR_LIMIT_YEARS = 16.0
 
 EXPECTED_PRIMARY_COUNTS = {
     "yaware": 3,
@@ -226,8 +194,6 @@ def validate_payload(payload: dict) -> dict:
     hierarchy = payload.get("training_hierarchy", {})
     if "predictions are never averaged" not in hierarchy.get("aggregation", ""):
         raise ValueError("Figure 4 no-ensemble rule is absent")
-    if tuple(payload.get("scanner_order", ())) != SCANNER_ORDER:
-        raise ValueError("Figure 4 scanner order has drifted")
 
     for condition in DISPLAY_ORDER:
         record = conditions[condition]
@@ -275,37 +241,6 @@ def validate_payload(payload: dict) -> dict:
             if not np.isfinite(np.asarray(values, dtype=float)).all():
                 raise ValueError(f"Invalid run values for {condition}/{run_name}")
 
-        scanner_record = record.get("adapted_scanner_effects", {})
-        if scanner_record.get("reference_scanner") != SCANNER_REFERENCE:
-            raise ValueError(f"Adapted scanner effects are not relative to NOT1 for {condition}")
-        scanner_effects = scanner_record.get("effects", [])
-        if tuple(effect.get("scanner") for effect in scanner_effects) != SCANNER_ORDER:
-            raise ValueError(f"Wrong adapted scanner order for {condition}")
-        estimates = []
-        bootstrap_columns = []
-        for effect in scanner_effects:
-            estimate, _, _ = finite_triplet(
-                {
-                    "estimate": effect.get("effect_years"),
-                    "ci_lower": effect.get("ci_lower"),
-                    "ci_upper": effect.get("ci_upper"),
-                },
-                f"{condition} adapted scanner effect",
-            )
-            estimates.append(estimate)
-            bootstrap = np.asarray(effect.get("bootstrap_values", []), dtype=float)
-            if bootstrap.shape != (1000,) or not np.isfinite(bootstrap).all():
-                raise ValueError(f"Invalid adapted scanner bootstrap for {condition}")
-            bootstrap_columns.append(bootstrap)
-        reference_index = SCANNER_ORDER.index(SCANNER_REFERENCE)
-        if not np.isclose(estimates[reference_index], 0.0, atol=1e-8):
-            raise ValueError(f"Adapted reference scanner is not zero for {condition}")
-        bootstrap_matrix = np.column_stack(bootstrap_columns)
-        if not np.allclose(bootstrap_matrix[:, reference_index], 0.0, atol=1e-8):
-            raise ValueError(
-                f"Adapted reference scanner bootstrap is not zero for {condition}"
-            )
-
     analysis_script = Path(payload.get("code", {}).get("analysis_script", ""))
     expected_hash = payload.get("code", {}).get("analysis_script_sha256")
     if not analysis_script.is_file():
@@ -313,30 +248,6 @@ def validate_payload(payload: dict) -> dict:
     if sha256_file(analysis_script) != expected_hash:
         raise ValueError("Figure 4 analysis script hash no longer matches its results")
     return conditions
-
-
-def add_vendor_groups(axis: mpl.axes.Axes) -> None:
-    transform = axis.get_xaxis_transform()
-    for start, end, label in VENDOR_GROUPS:
-        axis.plot(
-            [start - 0.42, end + 0.42],
-            [1.045, 1.045],
-            transform=transform,
-            color=COLORS["frozen"],
-            linewidth=0.8,
-            clip_on=False,
-        )
-        axis.text(
-            (start + end) / 2,
-            1.065,
-            label,
-            transform=transform,
-            ha="center",
-            va="bottom",
-            color=COLORS["frozen"],
-            fontsize=11.5,
-            clip_on=False,
-        )
 
 
 def style_axis(axis: mpl.axes.Axes, panel: dict, count: int) -> None:
@@ -609,22 +520,20 @@ def render(payload: dict, *, output_dir: Path, dpi: int) -> list[Path]:
     configure_matplotlib()
     count = len(DISPLAY_ORDER)
 
-    figure = plt.figure(figsize=(14.2, 6.8), constrained_layout=False)
-    outer = figure.add_gridspec(
-        2,
-        1,
-        height_ratios=(1.0, 0.78),
-        hspace=0.74,
-        left=0.18,
-        right=0.975,
-        bottom=0.09,
-        top=0.87,
+    figure = plt.figure(figsize=(14.2, 4.8), constrained_layout=False)
+    figure.suptitle(
+        "Brain-age prediction after fine-tuning",
+        x=0.53, y=0.99, fontsize=20, fontweight="bold",
     )
-    top = outer[0].subgridspec(
+    top = figure.add_gridspec(
         1,
         3,
         width_ratios=(1.12, 1.0, 1.08),
         wspace=0.20,
+        left=0.18,
+        right=0.975,
+        bottom=0.14,
+        top=0.69,
     )
     axes = [
         figure.add_subplot(top[0]),
@@ -633,9 +542,6 @@ def render(payload: dict, *, output_dir: Path, dpi: int) -> list[Path]:
     ]
     axes[1].sharey(axes[0])
     axes[2].sharey(axes[0])
-    bottom = outer[1].subgridspec(1, 2, width_ratios=(1.0, 0.028), wspace=0.045)
-    axis_heat = figure.add_subplot(bottom[0])
-    axis_colorbar = figure.add_subplot(bottom[1])
     labels = [conditions[condition]["label"] for condition in DISPLAY_ORDER]
     for axis, panel in zip(axes, PANELS):
         style_axis(axis, panel, count)
@@ -676,96 +582,13 @@ def render(payload: dict, *, output_dir: Path, dpi: int) -> list[Path]:
             ),
         ],
         loc="upper center",
-        bbox_to_anchor=(0.53, 0.985),
+        bbox_to_anchor=(0.53, 0.91),
         ncol=2,
         frameon=False,
         handletextpad=0.45,
         columnspacing=1.5,
     )
 
-    effects = np.asarray(
-        [
-            [
-                effect["effect_years"]
-                for effect in conditions[condition]["adapted_scanner_effects"][
-                    "effects"
-                ]
-            ]
-            for condition in DISPLAY_ORDER
-        ],
-        dtype=float,
-    )
-    if np.max(np.abs(effects)) > SCANNER_COLOR_LIMIT_YEARS:
-        raise ValueError(
-            "Fine-tuned scanner effects exceed the shared Figure 3/4 color scale"
-        )
-    diverging = LinearSegmentedColormap.from_list(
-        "scanner_shift", (COLORS["turquoise"], "#F7F7F5", COLORS["orange"])
-    )
-    normalization = TwoSlopeNorm(
-        vmin=-SCANNER_COLOR_LIMIT_YEARS,
-        vcenter=0.0,
-        vmax=SCANNER_COLOR_LIMIT_YEARS,
-    )
-    image = axis_heat.imshow(
-        effects,
-        aspect="auto",
-        cmap=diverging,
-        norm=normalization,
-        interpolation="nearest",
-    )
-    labels = [conditions[condition]["label"] for condition in DISPLAY_ORDER]
-    axis_heat.set_yticks(np.arange(count), labels)
-    axis_heat.set_xticks(np.arange(len(SCANNER_LABELS)), SCANNER_LABELS)
-    axis_heat.tick_params(axis="y", length=0, pad=7, labelsize=13)
-    axis_heat.tick_params(axis="x", length=0, pad=7, labelsize=11.8)
-    axis_heat.set_xlabel("Scanner (reference: NOT1 / Achieva)")
-    axis_heat.set_title(
-        "d   Fine-tuned participant-adjusted scanner shifts",
-        loc="left",
-        fontweight="bold",
-        pad=48,
-    )
-    for boundary in (2.5, 4.5):
-        axis_heat.axvline(boundary, color="white", linewidth=2.4, zorder=3)
-        axis_heat.axvline(boundary, color="#AAB0B5", linewidth=0.65, zorder=4)
-    for boundary in np.arange(count - 1) + 0.5:
-        axis_heat.axhline(boundary, color="white", linewidth=1.0, zorder=3)
-    add_vendor_groups(axis_heat)
-
-    for row in range(effects.shape[0]):
-        for column in range(effects.shape[1]):
-            value = float(effects[row, column])
-            color = (
-                "white"
-                if value <= -0.53 * SCANNER_COLOR_LIMIT_YEARS
-                else "#25292D"
-            )
-            axis_heat.text(
-                column,
-                row,
-                "ref." if SCANNER_ORDER[column] == SCANNER_REFERENCE else f"{value:+.1f}",
-                ha="center",
-                va="center",
-                fontsize=11.2,
-                color=color,
-                fontweight=(
-                    "bold"
-                    if abs(value) >= 0.70 * SCANNER_COLOR_LIMIT_YEARS
-                    else "normal"
-                ),
-                zorder=5,
-            )
-
-    colorbar = figure.colorbar(image, cax=axis_colorbar)
-    colorbar.set_label(
-        "Difference from NOT1 (years)",
-        rotation=270,
-        labelpad=26,
-        fontsize=13.5,
-    )
-    colorbar.outline.set_linewidth(0.7)
-    colorbar.ax.tick_params(labelsize=11.5)
     output_dir.mkdir(parents=True, exist_ok=True)
     outputs = [
         output_dir / "Figure4_adaptation.png",
@@ -802,6 +625,7 @@ def main() -> None:
     payload = json.loads(result_path.read_text(encoding="utf-8"))
     outputs = render(payload, output_dir=output_dir, dpi=args.dpi)
     manifest = {
+        "panels": ["internal_test_accuracy", "cross_scanner_reliability", "cross_scanner_absolute_difference"],
         "figure": "Figure 4: paired frozen-Ridge versus controlled-adaptation comparison",
         "analysis": str(result_path),
         "analysis_sha256": sha256_file(result_path),

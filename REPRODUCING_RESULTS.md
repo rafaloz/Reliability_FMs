@@ -18,7 +18,7 @@ python Analyses/reproduce_published.py \
 
 This calculates full-embedding dbICC, predicted-age dbICC, mean absolute
 pairwise cross-scanner differences, and participant-adjusted scanner shifts
-relative to NOT1. It also calculates the seven paired embedding-to-prediction
+relative to NOT1 (an additional output not used in the current manuscript). It also calculates the seven paired embedding-to-prediction
 contrasts and their BH-adjusted p-values.
 
 Internal-test accuracy is unavailable without true ages. The global BH
@@ -109,18 +109,13 @@ python Figures/figure2_reliability.py \
   --output-dir Results/published_with_reml/figures \
   --manifest Results/published_with_reml/figure2_figure_manifest.json
 
-python Figures/figure3_brain_age.py \
-  --results Results/published_with_reml/figure3_brain_age_results.json \
-  --output-dir Results/published_with_reml/figures \
-  --manifest Results/published_with_reml/figure3_figure_manifest.json
-
-python Figures/figure4_adaptation.py \
-  --results Results/published_with_reml/figure4_adaptation_results.json \
-  --output-dir Results/published_with_reml/figures \
-  --manifest Results/published_with_reml/figure4_figure_manifest.json
+python Figures/figure_combined_brain_age.py \
+  --frozen-results Results/published_with_reml/figure3_brain_age_results.json \
+  --adapted-results Results/published_with_reml/figure4_adaptation_results.json \
+  --output-dir Results/published_with_reml/figures
 ```
 
-The two prediction figures do not require REML, but do require ages. The
+The combined prediction figure (manuscript Figure 4) does not require REML, but does require ages. The
 representation figure requires REML. The renderers expect the primary
 1,000-replicate results; a reduced `--n-bootstrap` value is for smoke checks,
 not for reproducing the reported figures.
