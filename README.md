@@ -90,10 +90,15 @@ FSL, ANTs, SynthStrip/SynthSeg or HD-BET. Tools, templates and weights are not b
 
 ## Data sources
 
-Data sources are ON-Harmony (`ds004712`, version 2.0.1), NeuroCog (`ds003592`,
-with demographics on OSF `yhzxe`), NIMH-RV (`ds004215`), MR-ART (`ds004173`),
-[WAND](https://doi.org/10.12751/g-node.5mv3bf), and
-[CamCAN](https://opendata.mrc-cbu.cam.ac.uk/projects/camcan/).
+The travelling-heads dataset was [ON-Harmony (OpenNeuro ds004712, version 2.0.1)](https://openneuro.org/datasets/ds004712/versions/2.0.1).
+The brain-age development cohort combined five datasets:
+
+- [CamCAN](https://opendata.mrc-cbu.cam.ac.uk/projects/camcan/)
+- [NeuroCog (OpenNeuro ds003592)](https://openneuro.org/datasets/ds003592), with [accompanying demographic and behavioural data on OSF](https://osf.io/yhzxe/)
+- [WAND (G-Node)](https://doi.org/10.12751/g-node.5mv3bf)
+- [NIMH-RV (OpenNeuro ds004215)](https://openneuro.org/datasets/ds004215)
+- [MR-ART (OpenNeuro ds004173)](https://openneuro.org/datasets/ds004173)
+
 The four OpenNeuro datasets are distributed under CC0; WAND uses CC BY 4.0.
 CamCAN requires approved access and its own data-use agreement.
 
